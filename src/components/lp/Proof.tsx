@@ -43,7 +43,7 @@ export function Proof() {
 
       <div className="mx-auto mt-16 max-w-4xl">
         <h2 className="text-center text-xl font-extrabold sm:text-2xl">
-          O Combo EnferAprova foi feito para você, Técnica ou Enfermeira, que:
+          O Combo Aprovação foi feito para você, Técnica ou Enfermeira, que:
         </h2>
         <ul className="mt-8 grid gap-4 md:grid-cols-3">
           {PAINS.map((pain, i) => {

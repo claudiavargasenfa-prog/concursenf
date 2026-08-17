@@ -4,7 +4,7 @@ import { Proof } from "@/components/lp/Proof";
 import { Contents } from "@/components/lp/Contents";
 import { Offer } from "@/components/lp/Offer";
 
-const title = "Combo EnferAprova — Resumos para concursos de enfermagem";
+const title = "Combo Aprovação — Resumos para concursos de enfermagem";
 const description =
   "Mais de 60 e-books esquematizados, banco de questões e bônus para Enfermeiras e Técnicas de Enfermagem que querem ser aprovadas estudando 30 minutos por dia.";
 

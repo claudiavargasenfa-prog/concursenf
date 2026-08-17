@@ -1,7 +1,23 @@
 export const CHECKOUT_URL = "https://checkout.payt.com.br/9a6487ce9e0eb1cf073aedc8a029902a";
 
-/** URL do vídeo da VSL (embed). Troque pelo seu player (VTurb, Panda, YouTube...). */
-export const VSL_EMBED_URL = "";
+/** Nome da marca / projeto exibido no site. */
+export const BRAND = "Academia da Enfermagem";
+
+/** Nome do produto. */
+export const PRODUCT = "Combo Aprovação";
+
+/** Seus dados (autora do material). */
+export const AUTHOR = {
+  name: "Seu nome aqui",
+  role: "Enfermeira e professora",
+  bio: [
+    "Sou enfermeira e há anos ajudo estudantes e profissionais de enfermagem a estudarem de forma mais leve e objetiva.",
+    "Reuni nesses materiais tudo o que mais cai nas provas, em resumos ilustrados e diretos ao ponto, para você fixar o conteúdo sem se perder em milhares de páginas.",
+    "Aprovação não é sorte: é estratégia, constância e material certo nas mãos.",
+  ],
+  contactEmail: "contato@academiadaenfermagem.com.br",
+};
+
 
 /** Segundos até o CTA principal aparecer. 0 = aparece imediatamente. */
 export const CTA_DELAY_SECONDS = 0;
