@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/accordion";
 import { CtaButton } from "./CtaButton";
 import { AUTHOR, BRAND, FAQ, OFFER } from "@/lib/lp-content";
-import autoraFoto from "@/assets/autora.jpg";
+import autoraFoto from "@/assets/claudia-vargas.png.asset.json";
 
 export function Offer() {
   return (
@@ -58,7 +58,7 @@ export function Offer() {
       <section className="bg-background px-4 py-14">
         <div className="mx-auto grid max-w-4xl items-center gap-8 md:grid-cols-2">
           <img
-            src={autoraFoto}
+            src={autoraFoto.url}
             alt={`${AUTHOR.name}, ${AUTHOR.role}`}
             loading="lazy"
             width={1024}
