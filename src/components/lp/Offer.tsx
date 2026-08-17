@@ -6,8 +6,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CtaButton } from "./CtaButton";
-import { FAQ, OFFER } from "@/lib/lp-content";
-import professora from "@/assets/professora.jpg";
+import { AUTHOR, BRAND, FAQ, OFFER } from "@/lib/lp-content";
+import autoraFoto from "@/assets/autora.jpg";
 
 export function Offer() {
   return (
