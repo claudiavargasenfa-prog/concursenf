@@ -23,7 +23,7 @@ export function Offer() {
           </p>
 
           <div className="mt-8 rounded-2xl bg-soft-card p-8 text-surface-soft-foreground shadow-xl">
-            <p className="text-sm font-bold uppercase text-muted-foreground">Por apenas</p>
+            <p className="text-sm font-bold uppercase text-soft-muted">Por apenas</p>
             <p className="mt-1 text-lg font-bold">{OFFER.installments}</p>
             <p className="text-5xl font-black text-primary sm:text-6xl">
               {OFFER.installmentValue}
@@ -38,7 +38,7 @@ export function Offer() {
             <div className="mt-6 flex justify-center">
               <CtaButton>🔓 Adquirir o combo!</CtaButton>
             </div>
-            <p className="mt-4 text-sm text-muted-foreground">
+            <p className="mt-4 text-sm text-soft-muted">
               Menos que o preço de uma pizza por mês <span aria-hidden="true">🍕</span> para
               investir na sua aprovação.
             </p>
@@ -47,7 +47,7 @@ export function Offer() {
           <div className="mt-10 rounded-2xl border-2 border-primary bg-soft-card p-8 text-surface-soft-foreground">
             <ShieldCheck className="mx-auto size-12 text-primary" aria-hidden="true" />
             <h3 className="mt-3 text-xl font-extrabold">Garantia de 7 dias!</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-soft-muted">
               Você tem uma garantia incondicional de 7 dias para testar o produto. Se não ficar
               satisfeita nesse prazo, basta solicitar o reembolso do seu valor, sem burocracia.
             </p>
