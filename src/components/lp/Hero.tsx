@@ -1,6 +1,6 @@
-import { PlayCircle } from "lucide-react";
 import { CtaButton } from "./CtaButton";
-import { VSL_EMBED_URL } from "@/lib/lp-content";
+import { PRODUCT } from "@/lib/lp-content";
+import mockup from "@/assets/mockup-materiais.jpg";
 
 export function Hero() {
   return (
@@ -14,28 +14,13 @@ export function Hero() {
           em qualquer concurso do Brasil como Enfermeira ou Técnica de Enfermagem
         </h1>
 
-        <div className="w-full overflow-hidden rounded-xl border border-border bg-card">
-          <div className="relative mx-auto aspect-[9/16] w-full max-w-md">
-            {VSL_EMBED_URL ? (
-              <iframe
-                src={VSL_EMBED_URL}
-                title="Vídeo de apresentação do Combo EnferAprova"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 h-full w-full"
-              />
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-secondary text-center">
-                <PlayCircle className="size-16 text-primary" aria-hidden="true" />
-                <p className="px-6 text-sm text-muted-foreground">
-                  Espaço reservado para a sua VSL (vídeo vertical 9:16).
-                  <br />
-                  Informe o link do player para ativar.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        <img
+          src={mockup}
+          alt={`Materiais de estudo do ${PRODUCT} em PDF`}
+          width={1024}
+          height={1024}
+          className="w-full max-w-md rounded-2xl border border-border"
+        />
 
         <CtaButton respectDelay>🔓 Eu quero adquirir!</CtaButton>
         <p className="text-center text-xs text-muted-foreground">
