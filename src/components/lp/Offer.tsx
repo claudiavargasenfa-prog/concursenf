@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/accordion";
 import { CtaButton } from "./CtaButton";
 import { AUTHOR, BRAND, FAQ, OFFER } from "@/lib/lp-content";
-import autoraFoto from "@/assets/autora.jpg";
+import autoraFoto from "@/assets/claudia-vargas.png.asset.json";
 
 export function Offer() {
   return (
