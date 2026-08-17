@@ -21,7 +21,7 @@ export function Proof() {
           {TESTIMONIALS.map((t) => (
             <li
               key={t.name}
-              className="rounded-xl bg-background p-5 text-foreground shadow-sm"
+              className="rounded-xl bg-soft-card p-5 text-surface-soft-foreground shadow-sm"
             >
               <div className="flex items-center gap-1 text-highlight" aria-label="5 estrelas">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -29,9 +29,9 @@ export function Proof() {
                 ))}
               </div>
               <Quote className="mt-3 size-5 text-primary" aria-hidden="true" />
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t.text}</p>
+              <p className="mt-2 text-sm leading-relaxed text-soft-muted">{t.text}</p>
               <p className="mt-4 text-sm font-bold">{t.name}</p>
-              <p className="text-xs text-muted-foreground">{t.role}</p>
+              <p className="text-xs text-soft-muted">{t.role}</p>
             </li>
           ))}
         </ul>
@@ -51,7 +51,7 @@ export function Proof() {
             return (
               <li
                 key={pain}
-                className="rounded-xl bg-background p-6 text-center text-foreground shadow-sm"
+                className="rounded-xl bg-soft-card p-6 text-center text-surface-soft-foreground shadow-sm"
               >
                 <Icon className="mx-auto size-10 text-primary" aria-hidden="true" />
                 <p className="mt-4 text-sm font-semibold leading-relaxed">{pain}</p>

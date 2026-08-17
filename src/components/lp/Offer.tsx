@@ -22,7 +22,7 @@ export function Offer() {
             Você irá levar +60 materiais de estudo + banco de questões + todos os bônus inclusos
           </p>
 
-          <div className="mt-8 rounded-2xl bg-background p-8 text-foreground shadow-xl">
+          <div className="mt-8 rounded-2xl bg-soft-card p-8 text-surface-soft-foreground shadow-xl">
             <p className="text-sm font-bold uppercase text-muted-foreground">Por apenas</p>
             <p className="mt-1 text-lg font-bold">{OFFER.installments}</p>
             <p className="text-5xl font-black text-primary sm:text-6xl">
@@ -31,7 +31,7 @@ export function Offer() {
             <p className="mt-2 text-base">
               ou <strong>{OFFER.cash}</strong> à vista!
             </p>
-            <p className="mt-4 text-sm font-bold text-highlight">
+            <p className="mt-4 text-sm font-bold text-destructive">
               <span aria-hidden="true">⚠️ </span>
               {OFFER.discount}
             </p>
@@ -44,7 +44,7 @@ export function Offer() {
             </p>
           </div>
 
-          <div className="mt-10 rounded-2xl border-2 border-primary bg-background p-8 text-foreground">
+          <div className="mt-10 rounded-2xl border-2 border-primary bg-soft-card p-8 text-surface-soft-foreground">
             <ShieldCheck className="mx-auto size-12 text-primary" aria-hidden="true" />
             <h3 className="mt-3 text-xl font-extrabold">Garantia de 7 dias!</h3>
             <p className="mt-2 text-sm text-muted-foreground">
