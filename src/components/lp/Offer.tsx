@@ -58,8 +58,8 @@ export function Offer() {
       <section className="bg-background px-4 py-14">
         <div className="mx-auto grid max-w-4xl items-center gap-8 md:grid-cols-2">
           <img
-            src={professora}
-            alt="Hiagda, enfermeira e professora responsável pelos resumos"
+            src={autoraFoto}
+            alt={`${AUTHOR.name}, ${AUTHOR.role}`}
             loading="lazy"
             width={1024}
             height={1024}
@@ -67,26 +67,15 @@ export function Offer() {
           />
           <div>
             <h2 className="text-xl font-extrabold uppercase">
-              <span aria-hidden="true">🙋‍♀️ </span>Sua professora
+              <span aria-hidden="true">🙋‍♀️ </span>Quem vai te ensinar
             </h2>
             <h3 className="mt-2 text-lg font-bold text-primary">
-              Vou te ajudar a conquistar sua aprovação, Enfer!
+              {AUTHOR.name} — {AUTHOR.role}
             </h3>
             <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-              <p>Me chamo Hiagda, tenho 28 anos e já atuo com resumos de enfermagem há 8 anos.</p>
-              <p>
-                Desde que comecei o projeto, já ajudei mais de 50 mil estudantes e profissionais de
-                enfermagem a facilitarem seus estudos — são milhares de aprovações.
-              </p>
-              <p>
-                Como? Através de técnicas de estudo comprovadas pela neurociência e de bons
-                materiais, como resumos ilustrados: dá para estudar e fixar conteúdo sem perder a
-                cabeça durante a preparação.
-              </p>
-              <p>
-                Hoje eu entendo que é possível ser aprovada onde você quiser. Tudo depende da sua
-                estratégia — e as melhores começam aqui.
-              </p>
+              {AUTHOR.bio.map((p) => (
+                <p key={p}>{p}</p>
+              ))}
             </div>
             <div className="mt-6">
               <CtaButton>Quero ser aprovada!</CtaButton>
