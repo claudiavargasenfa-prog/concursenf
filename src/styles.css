@@ -45,7 +45,12 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-highlight: var(--highlight);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-soft-foreground: var(--surface-soft-foreground);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --color-ring-offset-background: var(--background);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
