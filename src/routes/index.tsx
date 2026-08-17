@@ -1,24 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Hero } from "@/components/lp/Hero";
+import { Proof } from "@/components/lp/Proof";
+import { Contents } from "@/components/lp/Contents";
+import { Offer } from "@/components/lp/Offer";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+const title = "Combo EnferAprova — Resumos para concursos de enfermagem";
+const description =
+  "Mais de 60 e-books esquematizados, banco de questões e bônus para Enfermeiras e Técnicas de Enfermagem que querem ser aprovadas estudando 30 minutos por dia.";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "product" },
+      { property: "og:url", content: "/" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "/" }],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="min-h-screen bg-background font-sans">
+      <Hero />
+      <Proof />
+      <Contents />
+      <Offer />
+    </main>
   );
 }
