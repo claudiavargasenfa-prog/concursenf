@@ -108,10 +108,10 @@ export function Offer() {
       </section>
 
       <footer className="border-t border-border bg-card px-4 py-10 text-center text-xs text-muted-foreground">
-        <p>Enfermagem Resumida · Materiais de estudo em PDF para concursos de enfermagem.</p>
+        <p>{BRAND} · Materiais de estudo em PDF para concursos de enfermagem.</p>
         <p className="mt-2">
           Este produto não garante aprovação; os resultados variam conforme a dedicação de cada
-          aluna. Dúvidas: contato@seudominio.com.br
+          aluna. Dúvidas: {AUTHOR.contactEmail}
         </p>
         <p className="mt-2">© {new Date().getFullYear()} Todos os direitos reservados.</p>
       </footer>
