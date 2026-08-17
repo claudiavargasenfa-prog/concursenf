@@ -58,7 +58,7 @@ export function Offer() {
       <section className="bg-background px-4 py-14">
         <div className="mx-auto grid max-w-4xl items-center gap-8 md:grid-cols-2">
           <img
-            src={autoraFoto}
+            src={autoraFoto.url}
             alt={`${AUTHOR.name}, ${AUTHOR.role}`}
             loading="lazy"
             width={1024}
