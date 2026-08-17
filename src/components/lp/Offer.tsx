@@ -15,7 +15,7 @@ export function Offer() {
       <section className="bg-surface-soft px-4 py-14 text-surface-soft-foreground">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-xl font-extrabold uppercase sm:text-2xl">
-            Estude as matérias mais cobradas através do Combo EnferAprova
+            Estude as matérias mais cobradas através do Combo Aprovação
             <span aria-hidden="true"> ⬇️</span>
           </h2>
           <p className="mt-4 text-base font-semibold">
