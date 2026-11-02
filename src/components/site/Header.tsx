@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, BookOpen, CalendarDays, GraduationCap, LibraryBig, ListChecks } from "lucide-react";
+import { ArrowUpRight, BookOpen, CalendarDays, GraduationCap, LibraryBig, ListChecks, FolderOpen } from "lucide-react";
 
 export function Header() {
   return (
@@ -18,6 +18,7 @@ export function Header() {
           <a href="/#trilhas" className="hidden items-center gap-1.5 text-muted-foreground transition hover:text-primary md:inline-flex"><BookOpen className="size-4" /> Trilhas</a>
           <a href="/#biblioteca" className="hidden items-center gap-1.5 text-muted-foreground transition hover:text-primary sm:inline-flex"><LibraryBig className="size-4" /> Biblioteca</a>
           <a href="/#guias" className="hidden text-muted-foreground transition hover:text-primary lg:inline">Guias</a>
+          <Link to="/materiais" className="hidden items-center gap-1.5 text-muted-foreground transition hover:text-primary lg:inline-flex"><FolderOpen className="size-4" /> Materiais</Link>
           <Link to="/questoes" className="hidden items-center gap-1.5 text-muted-foreground transition hover:text-primary lg:inline-flex"><ListChecks className="size-4" /> Questões</Link>
           <Link to="/plano-de-estudos" className="hidden items-center gap-1.5 text-muted-foreground transition hover:text-primary lg:inline-flex"><CalendarDays className="size-4" /> Meu plano</Link>
           <Link to="/concurso" className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-xs font-extrabold text-primary-foreground shadow-md transition hover:-translate-y-0.5 hover:shadow-lg sm:px-5 sm:text-sm">Combo Aprovação <ArrowUpRight className="size-4" /></Link>
