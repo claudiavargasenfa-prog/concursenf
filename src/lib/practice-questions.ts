@@ -71,10 +71,10 @@ export const PRACTICE_QUESTIONS: PracticeQuestion[] = [
       { id: "A", text: "Diagnóstico de enfermagem" },
       { id: "B", text: "Planejamento de enfermagem" },
       { id: "C", text: "Avaliação de enfermagem" },
-      { id: "D", text: "Avaliação inicial de enfermagem" },
+      { id: "D", text: "Avaliação de enfermagem" },
     ],
     answer: "D",
-    explanation: "A avaliação inicial de enfermagem corresponde à coleta inicial de dados subjetivos e objetivos. Esses dados subsidiam as etapas seguintes do Processo de Enfermagem.",
+    explanation: "A avaliação de enfermagem compreende a coleta inicial e contínua de dados subjetivos e objetivos sobre a pessoa, família ou coletividade, subsidiando as demais etapas do Processo de Enfermagem.",
     reference: "Resolução Cofen nº 736/2024, que dispõe sobre a implementação do Processo de Enfermagem.",
   },
   {
