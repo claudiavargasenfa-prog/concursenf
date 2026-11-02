@@ -1,0 +1,32 @@
+name: Validate ConcursEnf
+
+on:
+  push:
+    branches:
+      - "backup/**"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Build production application
+        run: bun run build
+      - name: Check formatting and lint changed application files
+        run: |
+          bunx prettier --write src/routes/index.tsx src/routes/concurso.tsx src/routes/__root.tsx src/components/site/Header.tsx src/components/lp/Hero.tsx src/components/lp/Proof.tsx src/components/lp/Contents.tsx src/components/lp/Offer.tsx src/styles.css
+          bunx eslint src/routes/index.tsx src/routes/concurso.tsx src/routes/__root.tsx src/components/site/Header.tsx src/components/lp/Hero.tsx src/components/lp/Proof.tsx src/components/lp/Contents.tsx src/components/lp/Offer.tsx
