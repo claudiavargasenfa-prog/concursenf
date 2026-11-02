@@ -216,14 +216,7 @@ function HomePage() {
           </div>
         </section>
 
-        <section className="bg-accent/30 px-4 py-16 sm:py-20">
-          <div className="mx-auto max-w-6xl">
-            <div className="mx-auto max-w-2xl text-center"><p className="text-xs font-extrabold uppercase tracking-[.2em] text-primary">Materiais complementares</p><h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Recursos que ampliam sua preparação</h2><p className="mt-3 text-sm leading-7 text-muted-foreground">Os bônus cadastrados no projeto continuam aqui, apresentados de forma organizada.</p></div>
-            <div className="mt-9 grid gap-4 sm:grid-cols-2">
-              {BONUSES.map((bonus) => <article key={bonus.title} className="rounded-3xl border border-border bg-card p-6"><span className="grid size-11 place-items-center rounded-2xl bg-primary/10 text-primary"><Sparkles className="size-5" /></span><h3 className="mt-4 font-extrabold">{bonus.title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{bonus.desc}</p></article>)}
-            </div>
-          </div>
-        </section>
+
 
         <section id="acesso-anual" className="bg-surface-soft px-4 py-16 text-surface-soft-foreground sm:py-20">
           <div className="mx-auto max-w-6xl">
