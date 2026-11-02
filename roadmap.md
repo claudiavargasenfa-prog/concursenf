@@ -1,4 +1,5 @@
 # Tarefas
+- [ ] Restaurar a landing anterior, mantendo somente o pagamento herdado desativado.
 - [x] Remover checkout, contatos não confirmados e rastreamento herdado.
 - [x] Substituir textos comerciais copiados e remover depoimentos e ofertas não comprovadas.
 - [x] Verificar as duas páginas e impedir encaminhamento à conta de terceiros.
