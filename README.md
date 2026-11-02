@@ -1,8 +1,8 @@
 # concursenf
 
-Preciso que vc leia o que esta nesse link, na integra e descreva para mim, passo a passo dessa construção. E depois me faz um resumo, com sua analise tecnica, vc consegue construir um site igual a esse?
+Site da Academia da Enfermagem, idealizado pela enfermeira Cláudia Vargas.
 
-https://enfermagemresumida.com.br/enferaprova-vsl-v1/?utm_source=FB&utm_medium=%5BD%C3%93LAR%5D%5BCJ25%5D%5B04%2F08%5D%7C120248473581820296&utm_campaign=%5BCAMP06%5D%5BVSL%5D%5B03%2F03%5D%5BBID%5D%7C120241026730950296&utm_content=VID159_ENFER_APROVA_VSL%7C120248473581790296&utm_term=Instagram_Feed&src=1786744995512_17867447464688&utm_id=120241026730950296&fbclid=PAb21jcATvx8VwZG9mAmV4dG4DYWVtATAAYWRpZAGrNVnFQz94c3J0YwZhcHBfaWQPNTY3MDY3MzQzMzUyNDI3AAGnUgtLx1UbhqYruAw9pEk3yZND5hvE-PSxQ9zj3h2XTFxyiSidFtKZAmzLRb8_aem_8kDWx9S-mJuqu4m80WFVPw
+O acesso comercial permanece indisponível até a definição de um checkout próprio e verificado.
 
 This project was built with [Lovable](https://lovable.dev).
 
