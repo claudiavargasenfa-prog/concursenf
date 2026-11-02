@@ -84,6 +84,7 @@ function HomePage() {
                 </Link>
               </div>
               <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3">
+                <Link to="/materiais" className="inline-flex items-center gap-2 text-sm font-bold text-primary transition hover:gap-3"><BookOpen className="size-4" /> Central de editais e materiais <ArrowRight className="size-4" /></Link>
                 <Link to="/plano-de-estudos" className="inline-flex items-center gap-2 text-sm font-bold text-primary transition hover:gap-3">
                   <CalendarDays className="size-4" /> Monte seu plano semanal <ArrowRight className="size-4" />
                 </Link>
