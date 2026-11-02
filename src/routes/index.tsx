@@ -15,7 +15,7 @@ import {
   AUDIENCE, AUTHOR, BENEFITS, BRAND, GUIDES, PACKS, SITE_FAQ, TAGLINE,
 } from "@/lib/site-content";
 import {
-  BONUSES, CONTENT_GROUPS, FAQ, PAINS, PRODUCT,
+  BONUSES, CONTENT_GROUPS, FAQ,
 } from "@/lib/lp-content";
 import mockup from "@/assets/mockup-materiais.jpg";
 import autoraFoto from "@/assets/claudia-vargas.png.asset.json";
