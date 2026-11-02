@@ -223,7 +223,7 @@ function HomePage() {
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-xs font-extrabold uppercase tracking-[.2em] text-primary">ConcursEnf completo</p>
               <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Tudo para transformar estudo em aprendizagem de verdade.</h2>
-              <p className="mt-4 text-sm leading-7 text-soft-muted sm:text-base">Uma preparação integrada: cada assunto estudado se conecta à prática, à correção, à revisão e ao acompanhamento da sua evolução.</p>
+              <p className="mt-4 text-sm leading-7 text-soft-muted sm:text-base">Pacote anual conjunto para Técnico e Auxiliar de Enfermagem. Cada assunto estudado se conecta à prática, à correção, à revisão e ao acompanhamento da sua evolução.</p>
             </div>
             <div className="mt-10 grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
               <div className="rounded-[2rem] border border-border bg-card p-6 shadow-sm sm:p-8">
@@ -240,7 +240,7 @@ function HomePage() {
                 </div>
               </div>
               <div className="rounded-[2rem] border border-border bg-card p-6 shadow-xl sm:p-8">
-                <div className="text-center"><span className="inline-flex rounded-full bg-accent px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-accent-foreground">Acesso anual completo</span><p className="mt-5 text-sm font-semibold text-muted-foreground">Preparação integrada para seu próximo concurso</p><p className="mt-3 text-4xl font-black tracking-tight text-foreground sm:text-5xl">{PLATFORM_OFFER.installments}</p><p className="mt-2 text-sm text-muted-foreground">ou <strong className="text-foreground">{PLATFORM_OFFER.cash}</strong></p></div>
+                <div className="text-center"><span className="inline-flex rounded-full bg-accent px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-accent-foreground">Acesso anual completo</span><p className="mt-5 text-sm font-semibold text-muted-foreground">{PLATFORM_OFFER.audience}</p><p className="mt-3 text-4xl font-black tracking-tight text-foreground sm:text-5xl">{PLATFORM_OFFER.installments}</p><p className="mt-2 text-sm text-muted-foreground">ou <strong className="text-foreground">{PLATFORM_OFFER.cash}</strong></p></div>
                 <div className="my-7 border-t border-border" />
                 <div className="flex items-center gap-2"><Sparkles className="size-5 text-primary" /><h3 className="text-lg font-black text-foreground">E você ainda recebe 5 bônus</h3></div>
                 <div className="mt-5 space-y-4">
