@@ -47,7 +47,7 @@ export const PACKS: Pack[] = [
     slug: "atencao-basica",
     title: "Atenção Básica na Prática",
     summary: "Tudo que a UBS e a Estratégia Saúde da Família cobram de você.",
-    bullets: ["PNAB e ESF esquematizadas", "Programas do Ministério da Saúde", "Saúde da família e atenção primária"],
+    bullets: ["PNAB e ESF esquematizadas", "Programas do Ministério da Saúde", "Atualizações por 1 ano"],
     audience: "Prática",
   },
   {
@@ -116,8 +116,8 @@ export const PACKS: Pack[] = [
   {
     slug: "personalizado",
     title: "Monte o seu pacote",
-    summary: "Organize sua revisão a partir dos assuntos mais importantes para o seu objetivo.",
-    bullets: ["Catálogo completo por tema", "Seleção de temas", "Trilha de estudos por objetivo"],
+    summary: "Escolha só os temas que você precisa e pague menos por material.",
+    bullets: ["Catálogo completo por tema", "Desconto progressivo", "Atendimento pelo WhatsApp"],
     audience: "Concurso",
   },
 ];
@@ -132,7 +132,20 @@ export const GUIDES: Guide[] = [
 ];
 
 export const SITE_FAQ = [
-  { q: "Quem pode estudar com a Academia da Enfermagem?", a: "A proposta contempla estudantes, técnicos de enfermagem e enfermeiros, com temas de formação, prática e concursos." },
-  { q: "O aplicativo já está disponível?", a: "O aplicativo está em preparação. A venda do acesso começará depois que estiver pronto." },
-  { q: "Quais assuntos estão previstos?", a: "Enfermagem, SUS, português e as áreas de estudo apresentadas nesta página." },
+  {
+    q: "Os materiais servem para técnico e para enfermeiro?",
+    a: "Sim. O conteúdo cobre as duas realidades: os temas são os mesmos cobrados em provas de nível técnico e superior, com profundidade suficiente para os dois.",
+  },
+  {
+    q: "Como recebo o material depois da compra?",
+    a: "O acesso chega por e-mail assim que o pagamento é confirmado. Em PIX e cartão a liberação é imediata.",
+  },
+  {
+    q: "Posso imprimir os resumos?",
+    a: "Pode. Todos os materiais são PDFs prontos para leitura na tela ou impressão.",
+  },
+  {
+    q: "Vai ter aplicativo?",
+    a: "Sim. Estamos construindo um app com os mesmos temas dos materiais, incluindo banco de questões e acompanhamento de estudo.",
+  },
 ];
