@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Preparação organizada para concursos de enfermagem, com Cláudia Vargas." },
       { name: "author", content: "Cláudia Vargas" },
       { property: "og:title", content: "ConcursEnf | Preparação para concursos de enfermagem" },
-      { property: "og:description", content: "Estudos de enfermagem, SUS e português com Cláudia Vargas." },
+      { property: "og:description", content: "Preparação organizada para concursos de enfermagem, com Cláudia Vargas." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
