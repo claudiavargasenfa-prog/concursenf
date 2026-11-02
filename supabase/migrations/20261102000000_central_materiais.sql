@@ -230,7 +230,6 @@ insert into public.organizing_boards (name, acronym, scope) values
 ('Instituto Consulplan','Consulplan','national'),
 ('Instituto Consulpam','Consulpam','regional'),
 ('Instituto de Apoio ao Desenvolvimento da Universidade Estadual de Pernambuco','IAUPE','regional'),
-('Instituto de Desenvolvimento e Capacitação','IDECAP','regional'),
 ('Fundação Cesgranrio','Cesgranrio','national'),
 ('Fundação Carlos Chagas','FCC','national'),
 ('Instituto de Desenvolvimento e Capacitação','IDECAP','regional'),
