@@ -131,11 +131,20 @@ drop policy if exists "Admins manage material documents" on public.material_docu
 create policy "Admins manage material documents" on public.material_documents for all to authenticated using (public.is_catalog_admin()) with check (public.is_catalog_admin());
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('concursenf-materiais', 'concursenf-materiais', true, 52428800, array['application/pdf'])
-on conflict (id) do nothing;
+values ('concursenf-materiais', 'concursenf-materiais', false, 52428800, array['application/pdf'])
+on conflict (id) do update set public = false, file_size_limit = 52428800, allowed_mime_types = array['application/pdf'];
 
 drop policy if exists "Public can read published contest files" on storage.objects;
-create policy "Public can read published contest files" on storage.objects for select using (bucket_id = 'concursenf-materiais');
+create policy "Public can read published contest files" on storage.objects for select using (
+  bucket_id = 'concursenf-materiais'
+  and (
+    public.is_catalog_admin()
+    or exists (
+      select 1 from public.material_documents d
+      where d.storage_path = storage.objects.name and d.published = true
+    )
+  )
+);
 drop policy if exists "Catalog admins upload contest files" on storage.objects;
 create policy "Catalog admins upload contest files" on storage.objects for insert to authenticated with check (bucket_id = 'concursenf-materiais' and public.is_catalog_admin());
 drop policy if exists "Catalog admins update contest files" on storage.objects;
@@ -168,6 +177,35 @@ from public.material_areas a
 cross join (values ('Enfermeiro','enfermeiro',1),('Técnico de Enfermagem','tecnico-enfermagem',2),('Auxiliar de Enfermagem','auxiliar-enfermagem',3)) as c(name,slug,sort_order)
 where a.slug = 'enfermagem'
 on conflict (area_id, slug) do nothing;
+
+
+insert into public.material_categories (area_id, name, slug, sort_order)
+select a.id, c.name, c.slug, c.sort_order
+from public.material_areas a
+join (values
+('medicina','Médico','medico',1),('medicina','Médico especialista','medico-especialista',2),
+('odontologia','Cirurgião-dentista','cirurgiao-dentista',1),('odontologia','Especialista','especialista',2),
+('farmacia','Farmacêutico','farmaceutico',1),('farmacia','Técnico em Farmácia','tecnico-farmacia',2),
+('fisioterapia','Fisioterapeuta','fisioterapeuta',1),
+('psicologia','Psicólogo','psicologo',1),
+('servico-social','Assistente Social','assistente-social',1),
+('educacao','Professor','professor',1),('educacao','Pedagogo','pedagogo',2),('educacao','Orientador Educacional','orientador-educacional',3),
+('direito-juridica','Analista Judiciário','analista-judiciario',1),('direito-juridica','Técnico Judiciário','tecnico-judiciario',2),('direito-juridica','Procurador','procurador',3),
+('administracao','Administrador','administrador',1),('administracao','Assistente Administrativo','assistente-administrativo',2),
+('tecnologia-informacao','Analista de TI','analista-ti',1),('tecnologia-informacao','Desenvolvedor','desenvolvedor',2),('tecnologia-informacao','Técnico de Informática','tecnico-informatica',3),
+('engenharia-arquitetura','Engenheiro','engenheiro',1),('engenharia-arquitetura','Arquiteto','arquiteto',2),
+('seguranca-publica','Policial','policial',1),('seguranca-publica','Bombeiro','bombeiro',2),('seguranca-publica','Guarda Municipal','guarda-municipal',3),
+('fiscal-controle','Auditor','auditor',1),('fiscal-controle','Fiscal','fiscal',2),('fiscal-controle','Controlador','controlador',3),
+('nutricao','Nutricionista','nutricionista',1),('biomedicina','Biomédico','biomedico',1)
+) as c(area_slug,name,slug,sort_order) on a.slug = c.area_slug
+on conflict (area_id, slug) do nothing;
+
+insert into public.organizing_boards (name, acronym, scope) values
+('Instituto de Apoio à Universidade de Pernambuco','IAUPE','institutional'),
+('Fundação de Apoio à Pesquisa e Extensão','Faperp','regional'),
+('Instituto Americano de Desenvolvimento','IADES','regional'),
+('Instituto de Desenvolvimento Educacional e Cultural','IDEC','regional')
+on conflict (name) do nothing;
 
 insert into public.organizing_boards (name, acronym, scope) values
 ('Fundação Getulio Vargas','FGV','national'),
