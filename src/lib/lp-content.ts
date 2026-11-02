@@ -87,11 +87,37 @@ export const CONTENT_GROUPS: { title: string; items: { name: string; topics: str
   },
 ];
 
+/** Recursos planejados para o acesso anual completo do ConcursEnf. */
+export const PLATFORM_FEATURES = [
+  { title: "Banco de questões comentadas por banca", desc: "Questões organizadas por disciplina, assunto, cargo e perfil de cobrança, com comentários para compreender o raciocínio." },
+  { title: "Estudo reverso com inteligência artificial", desc: "A partir das dificuldades identificadas, direciona a retomada do conteúdo e propõe materiais de apoio para estudar o que ainda precisa ser fortalecido." },
+  { title: "Flashcards com repetição espaçada", desc: "Cartões de pergunta e resposta com revisões programadas para apoiar a recuperação ativa e a consolidação do conhecimento." },
+  { title: "Simulados personalizados", desc: "Treinos organizados por banca, disciplina, assunto e objetivo de preparação." },
+  { title: "Radar de desempenho", desc: "Indicadores de acertos, erros, evolução e assuntos que merecem mais atenção." },
+  { title: "Plano de estudos conectado ao edital", desc: "Cronograma adaptado à prova e à disponibilidade do candidato, com acesso às questões, flashcards e revisões de cada tópico." },
+];
+
+export const PLATFORM_BONUSES = [
+  { title: "Bônus 1 — Guia estratégico de leitura do edital", desc: "Material de apoio para localizar disciplinas, pesos, etapas, requisitos e prazos, transformando o edital em uma rota de preparação." },
+  { title: "Bônus 2 — Caderno de revisão essencial de Enfermagem", desc: "Seleção organizada de pontos fundamentais para revisões rápidas de conteúdos específicos da profissão." },
+  { title: "Bônus 3 — Guia de legislação e políticas públicas de saúde", desc: "Roteiro de consulta às principais normas e políticas cobradas em concursos, com indicação das fontes oficiais." },
+  { title: "Bônus 4 — Checklist de preparação para a prova", desc: "Lista prática para acompanhar conteúdos estudados, revisões realizadas, simulados e providências antes do dia da avaliação." },
+  { title: "Bônus 5 — Rota de revisão para a reta final", desc: "Modelo de organização dos últimos dias de preparação, priorizando retomada de pontos críticos e treino de questões." },
+];
+
+/** Oferta planejada; checkout permanece desativado até a conclusão da plataforma. */
+export const PLATFORM_OFFER = {
+  installments: "12x de R$ 37,99",
+  cash: "R$ 357,99 à vista",
+  term: "Acesso anual completo",
+};
+
+/** Bônus do Combo Aprovação em materiais, mantidos separados da oferta da plataforma. */
 export const BONUSES = [
-  { title: "Banco de questões com as principais bancas e provas", desc: "Milhares de questões separadas por tema e por banca, com gabarito comentado." },
-  { title: "Comunidade de questões comentadas + acompanhamento no WhatsApp", desc: "Tire dúvidas e receba questões comentadas diariamente." },
-  { title: "Provas anteriores da EBSERH, FGV, IDECAN e outras", desc: "Treine com as provas reais das bancas que mais cobram enfermagem." },
-  { title: "Portal de planos de estudo personalizados para cada edital", desc: "Cronograma pronto para o seu concurso, com atualizações contínuas." },
+  { title: "Banco de questões por assunto", desc: "Questões organizadas para apoiar a prática e a revisão dos temas estudados." },
+  { title: "Guias de revisão complementar", desc: "Materiais de consulta para retomar conceitos importantes durante a preparação." },
+  { title: "Roteiro de leitura de editais", desc: "Orientações para identificar disciplinas e organizar prioridades de estudo." },
+  { title: "Checklist de preparação", desc: "Uma lista de acompanhamento para organizar a rotina até a prova." },
 ];
 
 export const FAQ = [
