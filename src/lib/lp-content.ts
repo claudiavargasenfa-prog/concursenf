@@ -107,9 +107,10 @@ export const PLATFORM_BONUSES = [
 
 /** Oferta planejada; checkout permanece desativado até a conclusão da plataforma. */
 export const PLATFORM_OFFER = {
-  installments: "12x de R$ 37,99",
-  cash: "R$ 357,99 à vista",
-  term: "Acesso anual completo",
+  audience: "Técnico e Auxiliar de Enfermagem",
+  installments: "12x de R$ 33,99",
+  cash: "R$ 317,99 à vista",
+  term: "Pacote anual completo — Técnico e Auxiliar de Enfermagem",
 };
 
 /** Bônus do Combo Aprovação em materiais, mantidos separados da oferta da plataforma. */
