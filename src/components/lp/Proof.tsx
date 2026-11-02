@@ -1,79 +1,21 @@
-import { Quote, Star, Clock, BookOpenCheck, HeartPulse } from "lucide-react";
-import { CtaButton } from "./CtaButton";
-import { PAINS, TESTIMONIALS } from "@/lib/lp-content";
+import { BookOpenCheck, Clock, HeartPulse, Search, Target } from "lucide-react";
+import { PAINS } from "@/lib/lp-content";
 import mockup from "@/assets/mockup-materiais.jpg";
 
 const PAIN_ICONS = [Clock, HeartPulse, BookOpenCheck];
 
 export function Proof() {
   return (
-    <section className="bg-surface-soft px-4 py-14 text-surface-soft-foreground">
-      <div className="mx-auto max-w-5xl">
-        <h2 className="text-center text-2xl font-extrabold uppercase sm:text-3xl">
-          <span aria-hidden="true">🤩 </span>Centenas de aprovações!
-        </h2>
-        <p className="mt-3 text-center text-base font-medium sm:text-lg">
-          O método que aprovou centenas de Técnicas e Enfermeiras em todo o Brasil
-          <span aria-hidden="true"> ⬇️</span>
-        </p>
-
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <li
-              key={t.name}
-              className="rounded-xl bg-soft-card p-5 text-surface-soft-foreground shadow-sm"
-            >
-              <div className="flex items-center gap-1 text-highlight" aria-label="5 estrelas">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="size-4 fill-current" aria-hidden="true" />
-                ))}
-              </div>
-              <Quote className="mt-3 size-5 text-primary" aria-hidden="true" />
-              <p className="mt-2 text-sm leading-relaxed text-soft-muted">{t.text}</p>
-              <p className="mt-4 text-sm font-bold">{t.name}</p>
-              <p className="text-xs text-soft-muted">{t.role}</p>
-            </li>
-          ))}
+    <section className="bg-background px-4 py-16 sm:py-20">
+      <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-2xl text-center"><p className="text-xs font-extrabold uppercase tracking-[.2em] text-primary">Uma rotina mais organizada</p><h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Estudar para concurso exige método, constância e bons materiais.</h2><p className="mt-4 text-sm leading-7 text-muted-foreground">O Combo Aprovação foi estruturado para reunir assuntos importantes em uma sequência de consulta e revisão.</p></div>
+        <ul className="mt-10 grid gap-4 md:grid-cols-3">
+          {PAINS.map((pain, i) => { const Icon = PAIN_ICONS[i] ?? Target; return <li key={pain} className="rounded-3xl border border-border bg-card p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"><span className="grid size-12 place-items-center rounded-2xl bg-primary/10 text-primary"><Icon className="size-6" /></span><p className="mt-4 text-sm font-semibold leading-7 text-foreground">{pain}</p></li>; })}
         </ul>
-
-        <div className="mt-10 flex justify-center">
-          <CtaButton>Eu quero ser aprovada!</CtaButton>
+        <div className="mt-12 grid items-center gap-8 rounded-[2rem] bg-surface-soft p-6 text-surface-soft-foreground sm:p-9 md:grid-cols-2">
+          <div><p className="text-xs font-extrabold uppercase tracking-[.2em] text-primary">Conheça a proposta</p><h3 className="mt-3 text-2xl font-black">Conteúdo visual para facilitar a revisão.</h3><p className="mt-3 text-sm leading-7 text-soft-muted">Consulte a organização dos temas e identifique os assuntos que fazem sentido para o edital que você está estudando.</p><a href="#conteudo-combo" className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-primary hover:underline"><Search className="size-4" /> Ver disciplinas e tópicos</a></div>
+          <img src={mockup} alt="Amostra visual dos materiais de estudo de enfermagem" loading="lazy" width={1200} height={900} className="w-full rounded-2xl border border-border shadow-xl" />
         </div>
-      </div>
-
-      <div className="mx-auto mt-16 max-w-4xl">
-        <h2 className="text-center text-xl font-extrabold sm:text-2xl">
-          O Combo Aprovação foi feito para você, Técnica ou Enfermeira, que:
-        </h2>
-        <ul className="mt-8 grid gap-4 md:grid-cols-3">
-          {PAINS.map((pain, i) => {
-            const Icon = PAIN_ICONS[i] ?? Clock;
-            return (
-              <li
-                key={pain}
-                className="rounded-xl bg-soft-card p-6 text-center text-surface-soft-foreground shadow-sm"
-              >
-                <Icon className="mx-auto size-10 text-primary" aria-hidden="true" />
-                <p className="mt-4 text-sm font-semibold leading-relaxed">{pain}</p>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-
-      <div className="mx-auto mt-16 max-w-3xl text-center">
-        <h2 className="text-xl font-extrabold sm:text-2xl">
-          Algumas amostras dos materiais de estudo
-          <span aria-hidden="true">👇</span>
-        </h2>
-        <img
-          src={mockup}
-          alt="Amostras dos e-books e mapas mentais de enfermagem em tablet e impressos"
-          loading="lazy"
-          width={1200}
-          height={900}
-          className="mt-6 w-full rounded-xl shadow-lg"
-        />
       </div>
     </section>
   );
