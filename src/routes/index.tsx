@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  ArrowRight, BookOpen, BookOpenCheck, Check, CheckCircle2, ChevronRight,
+  ArrowRight, BookOpen, BookOpenCheck, CalendarDays, Check, CheckCircle2, ChevronRight,
   Clock3, FileText, GraduationCap, HeartPulse, LibraryBig, Search,
   ShieldCheck, Sparkles, Stethoscope, Target, X,
 } from "lucide-react";
@@ -83,6 +83,9 @@ function HomePage() {
                   Conhecer o Combo Aprovação <ChevronRight className="size-4" />
                 </Link>
               </div>
+              <Link to="/plano-de-estudos" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-primary transition hover:gap-3">
+                <CalendarDays className="size-4" /> Monte seu plano semanal de estudos <ArrowRight className="size-4" />
+              </Link>
               <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs font-semibold text-soft-muted">
                 <span className="inline-flex items-center gap-2"><CheckCircle2 className="size-4 text-primary" /> Para técnicos e enfermeiros</span>
                 <span className="inline-flex items-center gap-2"><CheckCircle2 className="size-4 text-primary" /> Conteúdo por disciplina</span>
