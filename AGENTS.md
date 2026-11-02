@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Commercial links
+- Keep commercial destinations in `src/lib/lp-content.ts`; a null checkout disables purchase controls so unfinished setup never sends visitors to third-party accounts.
+- Never forward incoming query parameters automatically to commercial destinations; campaign URLs must not transfer inherited identifiers.

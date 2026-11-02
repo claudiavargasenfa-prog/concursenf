@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { CtaButton } from "@/components/lp/CtaButton";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import {
@@ -17,7 +18,6 @@ import {
   PACKS,
   SITE_FAQ,
   TAGLINE,
-  WHATSAPP_URL,
 } from "@/lib/site-content";
 import mockup from "@/assets/mockup-materiais.jpg";
 import autoraFoto from "@/assets/claudia-vargas.png.asset.json";
@@ -155,12 +155,7 @@ function HomePage() {
                       </li>
                     ))}
                   </ul>
-                  <a
-                    href={WHATSAPP_URL}
-                    className="mt-6 inline-flex justify-center rounded-full bg-primary px-5 py-3 text-sm font-extrabold uppercase text-primary-foreground transition hover:brightness-110"
-                  >
-                    Quero este pacote
-                  </a>
+                  <CtaButton className="mt-6 px-5 py-3 text-sm sm:text-sm">Quero este pacote</CtaButton>
                 </li>
               ))}
             </ul>
