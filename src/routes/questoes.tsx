@@ -8,7 +8,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PRACTICE_QUESTIONS, QUESTION_DISCIPLINES, type PracticeQuestion } from "@/lib/practice-questions";
 
-const HISTORY_KEY = "concurs enf-question-history-v1".replace(" ", "");
+const HISTORY_KEY = "concursenf-question-history-v1";
 
 type Attempt = {
   id: string;
