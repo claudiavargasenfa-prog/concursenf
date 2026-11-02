@@ -15,7 +15,7 @@ import {
   AUDIENCE, AUTHOR, BENEFITS, BRAND, GUIDES, PACKS, SITE_FAQ, TAGLINE,
 } from "@/lib/site-content";
 import {
-  BONUSES, CONTENT_GROUPS, FAQ,
+  CONTENT_GROUPS, FAQ, PLATFORM_BONUSES, PLATFORM_FEATURES, PLATFORM_OFFER,
 } from "@/lib/lp-content";
 import mockup from "@/assets/mockup-materiais.jpg";
 import autoraFoto from "@/assets/claudia-vargas.png.asset.json";
@@ -221,6 +221,41 @@ function HomePage() {
             <div className="mx-auto max-w-2xl text-center"><p className="text-xs font-extrabold uppercase tracking-[.2em] text-primary">Materiais complementares</p><h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Recursos que ampliam sua preparação</h2><p className="mt-3 text-sm leading-7 text-muted-foreground">Os bônus cadastrados no projeto continuam aqui, apresentados de forma organizada.</p></div>
             <div className="mt-9 grid gap-4 sm:grid-cols-2">
               {BONUSES.map((bonus) => <article key={bonus.title} className="rounded-3xl border border-border bg-card p-6"><span className="grid size-11 place-items-center rounded-2xl bg-primary/10 text-primary"><Sparkles className="size-5" /></span><h3 className="mt-4 font-extrabold">{bonus.title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{bonus.desc}</p></article>)}
+            </div>
+          </div>
+        </section>
+
+        <section id="acesso-anual" className="bg-surface-soft px-4 py-16 text-surface-soft-foreground sm:py-20">
+          <div className="mx-auto max-w-6xl">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-xs font-extrabold uppercase tracking-[.2em] text-primary">ConcursEnf completo</p>
+              <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Tudo para transformar estudo em aprendizagem de verdade.</h2>
+              <p className="mt-4 text-sm leading-7 text-soft-muted sm:text-base">Uma preparação integrada: cada assunto estudado se conecta à prática, à correção, à revisão e ao acompanhamento da sua evolução.</p>
+            </div>
+            <div className="mt-10 grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
+              <div className="rounded-[2rem] border border-border bg-card p-6 shadow-sm sm:p-8">
+                <div className="flex items-center gap-3"><span className="grid size-11 place-items-center rounded-2xl bg-primary/10 text-primary"><BookOpenCheck className="size-5" /></span><div><p className="text-xs font-bold uppercase tracking-wider text-primary">O que está incluído</p><h3 className="text-xl font-black text-foreground">Seis recursos integrados</h3></div></div>
+                <div className="mt-6 grid gap-5 sm:grid-cols-2">
+                  {PLATFORM_FEATURES.map((feature, index) => <article key={feature.title} className="flex gap-3">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-black text-primary">{index + 1}</span>
+                    <div><h4 className="text-sm font-extrabold text-foreground">{feature.title}</h4><p className="mt-1.5 text-xs leading-6 text-muted-foreground">{feature.desc}</p></div>
+                  </article>)}
+                </div>
+                <div className="mt-7 rounded-2xl bg-accent/40 p-4">
+                  <p className="text-sm font-extrabold text-foreground">Um único ciclo de aprendizagem</p>
+                  <p className="mt-2 text-xs font-semibold leading-6 text-muted-foreground">Estudar → Praticar → Corrigir → Revisar → Reavaliar → Acompanhar a evolução.</p>
+                </div>
+              </div>
+              <div className="rounded-[2rem] border border-border bg-card p-6 shadow-xl sm:p-8">
+                <div className="text-center"><span className="inline-flex rounded-full bg-accent px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-accent-foreground">Acesso anual completo</span><p className="mt-5 text-sm font-semibold text-muted-foreground">Preparação integrada para seu próximo concurso</p><p className="mt-3 text-4xl font-black tracking-tight text-foreground sm:text-5xl">{PLATFORM_OFFER.installments}</p><p className="mt-2 text-sm text-muted-foreground">ou <strong className="text-foreground">{PLATFORM_OFFER.cash}</strong></p></div>
+                <div className="my-7 border-t border-border" />
+                <div className="flex items-center gap-2"><Sparkles className="size-5 text-primary" /><h3 className="text-lg font-black text-foreground">E você ainda recebe 5 bônus</h3></div>
+                <div className="mt-5 space-y-4">
+                  {PLATFORM_BONUSES.map((bonus) => <div key={bonus.title} className="flex gap-3"><CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" /><div><h4 className="text-sm font-extrabold text-foreground">{bonus.title}</h4><p className="mt-1 text-xs leading-5 text-muted-foreground">{bonus.desc}</p></div></div>)}
+                </div>
+                <button type="button" disabled className="mt-7 inline-flex min-h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-highlight px-5 py-4 text-sm font-extrabold text-primary-foreground opacity-80">Quero meu acesso anual <ArrowRight className="size-4" /></button>
+                <p className="mt-3 text-center text-[11px] leading-5 text-muted-foreground">Condições e acesso à compra serão liberados após a conclusão e validação de todas as funcionalidades da plataforma.</p>
+              </div>
             </div>
           </div>
         </section>
