@@ -78,10 +78,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Academia da Enfermagem" },
-      { name: "description", content: "Estudos de enfermagem, SUS e português com Cláudia Vargas." },
+      { title: "ConcursEnf | Preparação para concursos de enfermagem" },
+      { name: "description", content: "Preparação organizada para concursos de enfermagem, com Cláudia Vargas." },
       { name: "author", content: "Cláudia Vargas" },
-      { property: "og:title", content: "Academia da Enfermagem" },
+      { property: "og:title", content: "ConcursEnf | Preparação para concursos de enfermagem" },
       { property: "og:description", content: "Estudos de enfermagem, SUS e português com Cláudia Vargas." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
