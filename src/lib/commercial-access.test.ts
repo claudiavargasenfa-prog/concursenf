@@ -1,8 +1,9 @@
-import { describe, expect, test } from "bun:test";
+import { describe, it } from "node:test";
+import { strict as assert } from "node:assert";
 import { CHECKOUT_URL } from "./lp-content";
 
 describe("Own commercial access", () => {
-  test("does not configure any checkout before the owner supplies her own account", () => {
-    expect(CHECKOUT_URL).toBeNull();
+  it("does not configure any checkout before the owner supplies her own account", () => {
+    assert.equal(CHECKOUT_URL, null);
   });
 });
