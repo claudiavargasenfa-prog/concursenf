@@ -14,13 +14,285 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      material_areas: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          icon: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      material_categories: {
+        Row: {
+          active: boolean
+          area_id: string
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          area_id: string
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          area_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_categories_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "material_areas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      material_contests: {
+        Row: {
+          area_id: string
+          board_id: string | null
+          category_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          municipality: string | null
+          official_url: string | null
+          organization_id: string | null
+          published: boolean
+          state: string | null
+          title: string
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          area_id: string
+          board_id?: string | null
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          municipality?: string | null
+          official_url?: string | null
+          organization_id?: string | null
+          published?: boolean
+          state?: string | null
+          title: string
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          area_id?: string
+          board_id?: string | null
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          municipality?: string | null
+          official_url?: string | null
+          organization_id?: string | null
+          published?: boolean
+          state?: string | null
+          title?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_contests_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "material_areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "material_contests_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "organizing_boards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "material_contests_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "material_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "material_contests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "material_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      material_documents: {
+        Row: {
+          contest_id: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          document_type: string
+          file_name: string | null
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          published: boolean
+          rights_status: string
+          source_url: string | null
+          storage_path: string | null
+          title: string
+        }
+        Insert: {
+          contest_id: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          document_type: string
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          published?: boolean
+          rights_status: string
+          source_url?: string | null
+          storage_path?: string | null
+          title: string
+        }
+        Update: {
+          contest_id?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          document_type?: string
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          published?: boolean
+          rights_status?: string
+          source_url?: string | null
+          storage_path?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_documents_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "material_contests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      material_organizations: {
+        Row: {
+          acronym: string | null
+          created_at: string
+          id: string
+          municipality: string | null
+          name: string
+          official_url: string | null
+          state: string | null
+        }
+        Insert: {
+          acronym?: string | null
+          created_at?: string
+          id?: string
+          municipality?: string | null
+          name: string
+          official_url?: string | null
+          state?: string | null
+        }
+        Update: {
+          acronym?: string | null
+          created_at?: string
+          id?: string
+          municipality?: string | null
+          name?: string
+          official_url?: string | null
+          state?: string | null
+        }
+        Relationships: []
+      }
+      organizing_boards: {
+        Row: {
+          acronym: string | null
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          scope: string
+          website_url: string | null
+        }
+        Insert: {
+          acronym?: string | null
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          scope?: string
+          website_url?: string | null
+        }
+        Update: {
+          acronym?: string | null
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          scope?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_catalog_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

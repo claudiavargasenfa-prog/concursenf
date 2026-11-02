@@ -197,7 +197,7 @@ function HomePage() {
                 <h3 className="mb-3 flex items-center gap-3 text-base font-extrabold text-foreground"><span className="grid size-9 place-items-center rounded-xl bg-primary/10 text-primary"><LibraryBig className="size-5" /></span>{group.title}</h3>
                 <Accordion type="multiple">
                   {group.items.map((item) => <AccordionItem key={item.name} value={item.name}>
-                    <AccordionTrigger className="text-left text-sm font-bold">{item.name}<span className="ml-2 text-xs font-medium text-muted-foreground">{item.topics.length} tópicos</span></AccordionTrigger>
+                    <AccordionTrigger className="text-left text-sm font-bold"><span className="grid min-w-0 flex-1 grid-cols-[1fr_5.5rem] items-center gap-2"><span className="min-w-0 break-words text-sm font-bold">{item.name}</span><span className="text-xs font-medium text-muted-foreground">{item.topics.length} tópicos</span></span></AccordionTrigger>
                     <AccordionContent><ul className="grid gap-2 pl-1 sm:grid-cols-2">{item.topics.map((topic) => <li key={topic} className="flex items-start gap-2 text-sm leading-6 text-muted-foreground"><ChevronRight className="mt-1 size-3.5 shrink-0 text-primary" />{topic}</li>)}</ul></AccordionContent>
                   </AccordionItem>)}
                 </Accordion>
