@@ -4,9 +4,9 @@ import { Proof } from "@/components/lp/Proof";
 import { Contents } from "@/components/lp/Contents";
 import { Offer } from "@/components/lp/Offer";
 
-const title = "Combo Aprovação — Academia da Enfermagem";
+const title = "Combo Aprovação — Resumos para concursos de enfermagem";
 const description =
-  "Conheça a proposta de estudos em enfermagem, SUS e português da Academia da Enfermagem, idealizada pela enfermeira Cláudia Vargas.";
+  "Mais de 60 e-books esquematizados, banco de questões e bônus para Enfermeiras e Técnicas de Enfermagem que querem ser aprovadas estudando 30 minutos por dia.";
 
 export const Route = createFileRoute("/concurso")({
   head: () => ({

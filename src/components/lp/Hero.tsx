@@ -7,7 +7,11 @@ export function Hero() {
     <section className="bg-background px-4 py-8 sm:py-12">
       <div className="mx-auto flex max-w-2xl flex-col items-center gap-6">
         <h1 className="text-center text-xl font-semibold leading-relaxed sm:text-2xl">
-          {PRODUCT}: <strong className="font-extrabold text-highlight">conhecimento para o próximo passo da sua carreira</strong>
+          <span aria-hidden="true">🩺 </span>
+          <strong className="font-extrabold text-highlight">
+            Você só precisa de 30 minutos por dia para garantir sua vaga
+          </strong>{" "}
+          em qualquer concurso do Brasil como Enfermeira ou Técnica de Enfermagem
         </h1>
 
         <img
@@ -18,9 +22,9 @@ export function Hero() {
           className="w-full max-w-md rounded-2xl border border-border"
         />
 
-        <CtaButton>🔓 Eu quero adquirir!</CtaButton>
+        <CtaButton respectDelay>🔓 Eu quero adquirir!</CtaButton>
         <p className="text-center text-xs text-muted-foreground">
-          Uma proposta da Academia da Enfermagem para técnicos e enfermeiros.
+          Compra 100% segura · Garantia incondicional de 7 dias
         </p>
       </div>
     </section>

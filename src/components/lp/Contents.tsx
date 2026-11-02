@@ -1,3 +1,4 @@
+import { Gift } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -5,18 +6,19 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CtaButton } from "./CtaButton";
-import { CONTENT_GROUPS } from "@/lib/lp-content";
+import { BONUSES, CONTENT_GROUPS } from "@/lib/lp-content";
 
 export function Contents() {
   return (
     <section className="bg-background px-4 py-14">
       <div className="mx-auto max-w-3xl">
         <h2 className="text-center text-2xl font-extrabold uppercase sm:text-3xl">
-          Uma base de estudos para avançar com confiança
+          Tudo que você vai receber:
         </h2>
         <p className="mt-4 text-center text-base text-muted-foreground">
-          Conheça os assuntos previstos para o aplicativo da Academia da Enfermagem:
-          conhecimentos profissionais, saúde pública e língua portuguesa.
+          Principais temáticas da Enfermagem, somando mais de{" "}
+          <strong className="text-highlight">60 e-books</strong> de conteúdo esquematizado e
+          questões comentadas, tudo disponível em uma área de membros exclusiva.
         </p>
 
         {CONTENT_GROUPS.map((group) => (
@@ -43,8 +45,31 @@ export function Contents() {
           </div>
         ))}
 
-        <div className="mt-10 flex justify-center">
-          <CtaButton>Conhecer o acesso</CtaButton>
+        <p className="mt-10 text-center text-xl font-extrabold uppercase">
+          E muitos outros! <span aria-hidden="true">👇</span>
+        </p>
+        <div className="mt-6 flex justify-center">
+          <CtaButton>🔓 Liberar materiais</CtaButton>
+        </div>
+
+        <h2 className="mt-16 text-center text-2xl font-extrabold sm:text-3xl">
+          Veja a lista de <span className="text-highlight">bônus</span> inclusos
+          <span aria-hidden="true"> ⬇️</span>
+        </h2>
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+          {BONUSES.map((bonus) => (
+            <li key={bonus.title} className="rounded-xl border border-border bg-card p-6">
+              <Gift className="size-8 text-primary" aria-hidden="true" />
+              <h3 className="mt-3 text-base font-bold uppercase leading-snug">{bonus.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{bonus.desc}</p>
+              <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-3 py-1 text-xs font-extrabold uppercase text-primary-foreground">
+                Bônus incluso · Grátis
+              </p>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-8 flex justify-center">
+          <CtaButton>🔓 Liberar os bônus</CtaButton>
         </div>
       </div>
     </section>
