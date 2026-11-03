@@ -1,54 +1,75 @@
-# Área do Aluno com acesso anual (12 meses)
+# Área do Aluno com acesso anual liberado pelo Mercado Pago
 
 ## O que existe hoje
-**Contas e login**
-- O sistema de contas já está ligado: e-mail/senha e Google. Isso foi feito no momento em que o Lovable Cloud foi conectado.
-- Mas o site não tem nenhuma tela de entrar ou cadastrar, nenhuma área restrita (não existe `src/routes/_authenticated/`) e nenhum botão "Entrar" no topo (`Header.tsx`).
-- `src/start.ts` já envia a identificação da pessoa logada em cada pedido ao servidor (`attachSupabaseAuth`). Hoje nenhuma função usa isso.
+- **Mercado Pago:** nenhuma integração no site. Nenhuma linha de código cita Mercado Pago, webhook ou preferência de pagamento, e nada foi instalado para isso.
+  - `CHECKOUT_URL = null` em `src/lib/lp-content.ts`. O teste `src/lib/commercial-access.test.ts` exige que ele continue vazio.
+  - Os únicos segredos guardados são `LOVABLE_API_KEY` e `LOVABLE_CRON_SECRET`. Não há nenhuma credencial do Mercado Pago.
+- **Contas e login:** já ligados (e-mail/senha e Google), mas o site não tem tela de entrar, nem área restrita, nem botão "Entrar". `src/start.ts` já envia a identificação de quem está logado.
+- **Banco de dados:** só as 6 tabelas da Central de Materiais, com proteção (RLS). A administradora é reconhecida por `is_catalog_admin()`, que olha `app_metadata.role`. Não existem tabelas de alunos, pagamentos ou papéis.
+- **Avisos:** nenhum domínio de e-mail, nenhuma tarefa agendada, nenhum WhatsApp ou SMS.
 
-**Banco de dados**
-- Só existem as 6 tabelas da Central de Materiais. Todas estão protegidas (RLS): o público só lê o que está publicado, e alterações exigem administradora.
-- Não existe tabela de alunos, de assinatura nem de papéis (cargos).
-- A única função é `is_catalog_admin()`. Ela confere se a pessoa é administradora olhando um campo da própria conta (`app_metadata.role = catalog_admin`). Ninguém tem esse papel ainda.
+## Como vai funcionar
+```text
+Aluno logado -> "Assinar 12 meses" -> o servidor cria a cobrança no Mercado Pago
+   (a cobrança leva uma referência com o aluno, o plano e o pedido)
+-> o aluno paga no Mercado Pago
+-> o Mercado Pago avisa o site (webhook)
+-> o site confere a assinatura do aviso
+-> o site consulta o pagamento direto na API do Mercado Pago
+-> se o pagamento estiver aprovado, libera ou renova o acesso (sem repetir)
+```
 
-**Avisos**
-- **E-mail:** nenhum domínio de envio configurado. Só saem os e-mails padrão do login (confirmação de conta, troca de senha), não avisos do site.
-- **WhatsApp e SMS:** nenhuma integração. O WhatsApp só aparece citado em textos.
-- **Tarefas agendadas:** nenhuma.
-- **Pagamento:** desligado (`CHECKOUT_URL = null`).
+1. **Cadastro e login** (`/auth`, `/reset-password`). O topo passa a mostrar "Entrar" ou "Minha área / Sair". A conta é criada uma vez só. Quem renova usa a mesma conta.
+2. **Compra:** o botão "Assinar" leva ao Mercado Pago só se o aluno estiver logado. A cobrança é criada no servidor, com o preço e o plano tirados do banco, nunca do navegador.
+3. **Aviso do Mercado Pago (webhook):**
+   - confere a assinatura e recusa o aviso se ela não bater;
+   - não confia no conteúdo do aviso: sempre consulta o pagamento na API pelo número;
+   - só libera com status `approved`. Pagamentos pendentes, em análise, rejeitados, cancelados ou estornados ficam registrados, mas não liberam acesso;
+   - se o mesmo pagamento chegar de novo, não faz nada (o número do pagamento é único);
+   - confere o valor e a moeda contra o plano antes de liberar.
+4. **Regra dos 12 meses:**
+   - primeira compra: começa na data e hora da aprovação e vence 12 meses depois;
+   - renovação com acesso ainda válido: vence 12 meses depois do vencimento atual;
+   - renovação depois de vencido: começa na nova aprovação.
+5. **Painel do aluno** (`/minha-area`): situação, data de início, vencimento, dias restantes e histórico de pagamentos. Quando faltar 30 dias ou menos, aparece um aviso em destaque.
+6. **Aviso de 30 dias:** uma tarefa diária registra um único aviso por período de acesso, que aparece no painel. O envio por e-mail fica pronto para ligar quando o domínio de envio for configurado.
+7. **Painel da administradora** (`/admin/alunos`): alunos, vencimentos, filtro "vence em 30 dias" e pagamentos com status. A administradora só acompanha: não libera acesso na mão.
 
-## O que será construído
-1. **Cadastro e login** (`/auth`): e-mail/senha e Google, com "esqueci a senha" e a página `/reset-password`. O topo mostra "Entrar" ou "Minha área / Sair" conforme a pessoa estiver logada. Tudo no visual azul-petróleo atual.
-2. **Ficha do aluno:** cada conta ganha um perfil com nome e telefone opcional, mais um registro de acesso com:
-   - data de início;
-   - vencimento, sempre calculado pelo banco como início + 12 meses (não dá para alterar pelo navegador);
-   - situação: ativo, vence em breve, vencido ou aguardando liberação.
-   O aluno só vê e lê os próprios dados. Ele não consegue mudar as datas.
-3. **Painel do aluno** (`/minha-area`): situação, data de vencimento, dias restantes e atalhos para Questões, Plano e Materiais. Quando faltar 30 dias ou menos, aparece um aviso em destaque dentro do site.
-4. **Painel da administradora** (`/admin/alunos`): lista de alunos com início, vencimento e situação, filtro "vencem em 30 dias", e botões para liberar e renovar o acesso por mais 12 meses. Só quem tiver o papel de administradora entra.
-5. **Aviso fora do site, por e-mail.** Precisa de um domínio de envio verificado. Com isso, uma tarefa diária manda ao aluno um e-mail único "faltam 30 dias" e outro resumo para a administradora. Cada aviso fica registrado para nunca ser enviado duas vezes.
-   - Se o domínio não for configurado, as etapas 1 a 4 funcionam normalmente e o aviso fica apenas dentro do site.
-   - O WhatsApp exigiria uma conta comercial (WhatsApp Business ou Twilio) e não está no plano.
+## O que você vai precisar ter no Mercado Pago
+Nada disso é colado no chat. Os segredos vão em Configurações do Projeto → Segredos quando eu pedir.
 
-## Ordem de entrega
-Etapas 1 e 2 → etapa 3 → etapa 4 → etapa 5. Cada etapa pode ser testada antes da próxima.
+| Item | Onde obter | Como guardar |
+|---|---|---|
+| **Access Token de produção** (`APP_USR-...`) | Mercado Pago Developers → Suas integrações → sua aplicação → Credenciais de produção | Segredo `MERCADOPAGO_ACCESS_TOKEN` |
+| **Access Token de teste** (para testar antes) | Mesma tela → Credenciais de teste | Segredo `MERCADOPAGO_TEST_ACCESS_TOKEN` (opcional) |
+| **Assinatura secreta do webhook** | Sua aplicação → Webhooks → Configurar notificações → "Assinatura secreta", gerada pelo próprio Mercado Pago | Segredo `MERCADOPAGO_WEBHOOK_SECRET` |
+| **URL de notificação** | Eu entrego pronta: `https://concursenf.lovable.app/api/public/mercadopago/webhook`. Ela entra no painel do Mercado Pago com o evento **Pagamentos** marcado. | Não é segredo |
+| **Plano anual: nome e valor (R$)** | Você define | Fica salvo no banco, não é segredo |
+| **Public Key** | Não é necessária: a compra acontece na página do próprio Mercado Pago | — |
 
-## A decisão que preciso de você
-**Quando começa a contar os 12 meses**, já que ainda não existe pagamento?
-- **A) A administradora libera manualmente** (recomendado). A pessoa se cadastra, fica "aguardando liberação", e a contagem começa no dia em que você libera. Quando o pagamento existir, ele poderá liberar automaticamente.
-- **B) No dia do cadastro.** Qualquer pessoa que criar conta ganha 12 meses na hora, de graça.
-
-Também vou precisar do **e-mail da administradora** para dar esse acesso a ela. Para o aviso por e-mail, será preciso configurar o domínio de envio (por exemplo, `academiadaenfermagem.com.br`) em um passo guiado.
+## Decisões que preciso de você
+1. **Nome e valor do plano anual** (por exemplo, "ConcursEnf Anual — R$ 297,00") e as **formas de pagamento** aceitas (Pix, cartão, parcelamento).
+2. **E-mail da administradora**, para dar a ela o acesso ao painel.
+3. (Opcional) **Domínio de envio de e-mail** para o aviso de 30 dias chegar fora do site. Sem ele, o aviso aparece só no painel.
 
 ## Detalhes técnicos
-- Tabelas:
-  - `profiles` e `user_roles` (com o enum `app_role`), ligadas a `auth.users` e apagadas junto com a conta;
-  - `student_access` com `user_id`, `starts_at`, `expires_at` (preenchido por trigger: starts_at + 12 meses), `status` e `granted_by`;
-  - `access_notifications`, com chave única por acesso e tipo de aviso, para não repetir envios.
-- Cada tabela recebe GRANT e RLS próprios: o dono só lê o que é dele; `has_role(auth.uid(),'admin')` dá leitura e escrita à administradora. A situação é calculada pela data na hora da consulta, sem tarefa agendada só para isso.
-- Um trigger em `auth.users` cria o perfil (e, na opção B, o acesso).
-- Liberar e renovar passam por `createServerFn` com `requireSupabaseAuth` e conferência de `has_role`.
-- Rotas: `/auth` e `/reset-password` são públicas; `_authenticated/minha-area` e `_authenticated/admin/alunos` são protegidas. Um único `onAuthStateChange` fica em `__root.tsx`.
-- E-mail: estrutura de modelos do Lovable, mais a rota `/api/public/jobs/avisos-vencimento` protegida por `authenticateCronRequest`, chamada uma vez por dia por uma tarefa agendada.
-- `is_catalog_admin()` continua como está para a Central de Materiais. Pode ser unificado com `has_role` depois.
-- Nada será publicado.
+- **Tabelas, cada uma com GRANT e RLS:**
+  - `profiles` e `user_roles` com o enum `app_role`, mais a função `has_role()`;
+  - `plans` com `price_cents`, `currency`, `duration_months = 12` e `active`;
+  - `checkout_orders` com `id`, `user_id`, `plan_id` e `external_reference` único;
+  - `payments` com `mp_payment_id` único, `status`, `status_detail`, `amount`, `currency`, `date_created`, `date_approved`, `external_reference`, `raw` (jsonb), `order_id` e `processed_at`;
+  - `student_access` com uma linha por usuário, `starts_at`, `expires_at` e `last_payment_id`;
+  - `access_notifications`, com chave única por acesso, vencimento e tipo de aviso;
+  - `payment_audit_log` com todo aviso recebido, o resultado da conferência da assinatura e a ação tomada.
+- **Proteção:** o aluno só lê o que é dele. A administradora lê tudo por `has_role`. Ninguém escreve em `payments` ou `student_access` pelo navegador: só o servidor.
+- **Liberação em uma única função do banco** (security definer, chamada só pelo servidor): `grant_access_from_payment(mp_payment_id)` trava a linha, sai sem fazer nada se o pagamento já foi processado e aplica a regra de extensão. Isso evita duplicar ou estender duas vezes quando chegam avisos ao mesmo tempo.
+- **Rotas no servidor:**
+  - a criação da cobrança usa `createServerFn` com `requireSupabaseAuth` e `POST /checkout/preferences`, com `external_reference = order.id` e `notification_url`;
+  - o webhook fica em `src/routes/api/public/mercadopago/webhook.ts`. Ele confere o cabeçalho `x-signature` (`ts` e `v1`) com HMAC-SHA256 do manifesto `id:<data.id>;request-id:<x-request-id>;ts:<ts>;` e comparação em tempo constante, recusa avisos com `ts` antigo, e depois consulta `GET /v1/payments/{id}`;
+  - o acesso ao banco com privilégio total (`supabaseAdmin`) só é carregado dentro do código que roda após a verificação.
+- **Tarefa agendada:** `/api/public/jobs/avisos-vencimento`, uma vez por dia, protegida por `authenticateCronRequest`.
+- **Ajustes no que já existe:**
+  - `CHECKOUT_URL` continua `null`. O botão de compra passa a chamar a função do servidor, e `commercial-access.test.ts` ganha testes das regras de extensão dos 12 meses e de não repetir liberação;
+  - `is_catalog_admin()` continua como está;
+  - o layout azul-petróleo é mantido e nada será publicado.
+- **Ordem de entrega:** login e tabelas → painel do aluno → compra e webhook, testados com credenciais de teste → painel da administradora → aviso de 30 dias.
