@@ -171,7 +171,7 @@ function HomePage() {
             </div>
             <div className="mt-9 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {PACKS.map((pack, i) => {
-                const Icon = pathIcons[i % pathIcons.length];
+                const Icon = pathIcons[i % pathIcons.length] ?? BookOpen;
                 return <article key={pack.slug} className="group flex flex-col rounded-3xl border border-border bg-card p-6 transition duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl">
                   <div className="flex items-start justify-between gap-3"><span className="grid size-12 place-items-center rounded-2xl bg-primary/10 text-primary"><Icon className="size-6" /></span><span className="rounded-full bg-secondary px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-secondary-foreground">{pack.audience}</span></div>
                   <h3 className="mt-5 text-lg font-extrabold leading-snug">{pack.title}</h3>
