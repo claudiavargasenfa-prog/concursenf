@@ -103,7 +103,7 @@ function StudyPlanPage() {
     const dailyCapacity = Math.max(1, Math.floor(minutesPerDay / 25));
     const nextTasks: StudyTask[] = studyTopics.map((item, index) => {
       const dayIndex = Math.floor(index / dailyCapacity) % selectedDays.length;
-      const day = selectedDays[dayIndex];
+      const day = selectedDays[dayIndex] ?? "";
       const block = Math.floor(index / (dailyCapacity * selectedDays.length)) + 1;
       return {
         id: `${day}-${item.subject}-${item.topic}-${index}`,
