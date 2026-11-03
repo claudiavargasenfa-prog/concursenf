@@ -20,8 +20,7 @@ import {
 } from "@/components/ui/sheet";
 
 const mobileLinks = [
-  { label: "Início", to: "/", icon: GraduationCap },
-  { label: "Acadêmicos", to: "/", hash: "trilhas", icon: BookOpen },
+  { label: "Acadêmicos", to: "/", icon: BookOpen },
   { label: "Concursos", to: "/concurso", icon: Target },
   { label: "Biblioteca", to: "/", hash: "biblioteca", icon: LibraryBig },
   { label: "Materiais", to: "/materiais", icon: FolderOpen },
@@ -33,7 +32,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-card/95 shadow-sm backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
-        <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label="ConcursEnf — início">
+        <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label="ConcursEnf — área acadêmica">
           <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-md transition-transform group-hover:-rotate-6">
             <GraduationCap className="size-6" />
           </span>
@@ -48,7 +47,7 @@ export function Header() {
         </Link>
 
         <nav aria-label="Navegação principal" className="hidden items-center gap-3 text-sm font-semibold lg:flex xl:gap-5">
-          <Link to="/" hash="trilhas" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-primary">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-primary">
             <BookOpen className="size-4" /> Acadêmicos
           </Link>
           <Link to="/concurso" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-primary">
