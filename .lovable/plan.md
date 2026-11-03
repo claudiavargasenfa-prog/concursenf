@@ -1,37 +1,54 @@
-# Auditoria do ConcursEnf (nenhum arquivo foi alterado)
+# Área do Aluno com acesso anual (12 meses)
 
-## 1. O que está pronto e funcionando
-- **Página inicial (`/`)** em `src/routes/index.tsx`, com textos vindos de `src/lib/site-content.ts`. Os links para `/materiais`, `/plano-de-estudos`, `/questoes` e `/concurso` funcionam (linhas 84–93 e 170). A lista de disciplinas da Biblioteca já está alinhada.
-- **Landing (`/concurso`)** em `src/routes/concurso.tsx`. Ela usa os blocos `Hero`, `Proof`, `Contents` e `Offer` de `src/components/lp/`, e os textos vêm de `src/lib/lp-content.ts`.
-- **Questões (`/questoes`)** em `src/routes/questoes.tsx`. Já funcionam: filtro por disciplina e dificuldade, responder, ver o gabarito comentado e um histórico guardado só no navegador (`concursenf-question-history-v1`).
-- **Plano de estudos (`/plano-de-estudos`)**: escolher assuntos (da lista `CONTENT_GROUPS`), dias e minutos por dia, gerar as tarefas e marcar como feitas. Tudo fica guardado só no navegador.
-- **Materiais (`/materiais`)**: busca de verdade no banco de dados (áreas, cargos, bancas, concursos e documentos), com filtros, tela de erro com "Tentar novamente" e abertura de PDF por link temporário. A estrutura vem de `supabase/migrations/20261102000000_central_materiais.sql`.
-- **Menu do topo** (`src/components/site/Header.tsx`) com acesso a todas as páginas.
+## O que existe hoje
+**Contas e login**
+- O sistema de contas já está ligado: e-mail/senha e Google. Isso foi feito no momento em que o Lovable Cloud foi conectado.
+- Mas o site não tem nenhuma tela de entrar ou cadastrar, nenhuma área restrita (não existe `src/routes/_authenticated/`) e nenhum botão "Entrar" no topo (`Header.tsx`).
+- `src/start.ts` já envia a identificação da pessoa logada em cada pedido ao servidor (`attachSupabaseAuth`). Hoje nenhuma função usa isso.
 
-## 2. Incompleto
-- **Banco de questões pequeno:** são só 8 questões, escritas direto no código em `src/lib/practice-questions.ts`. Não existe tabela de questões no banco, nem filtro por banca, ano ou cargo (Técnico/Auxiliar).
-- **Materiais sem conteúdo:** o banco já vem com áreas, cargos e bancas, mas nenhum concurso e nenhum documento. A página vai aparecer vazia, e não há tela para você enviar os PDFs.
-- **Cores diferentes em `/materiais`:** essa página usa verde e dourado escritos à mão (`#174D3B`, `#D9C18B`, `#D7B56D`). Isso foge da paleta azul que você escolheu e da identidade definida para o site.
-- **Progresso preso a um aparelho:** o histórico de questões e o plano de estudos ficam só no navegador. Se a pessoa trocar de celular ou limpar os dados, perde tudo.
-- **Nenhum login:** o login está ligado no servidor, mas nenhuma página tem tela de entrar ou cadastrar. Quem acessa não consegue criar conta.
+**Banco de dados**
+- Só existem as 6 tabelas da Central de Materiais. Todas estão protegidas (RLS): o público só lê o que está publicado, e alterações exigem administradora.
+- Não existe tabela de alunos, de assinatura nem de papéis (cargos).
+- A única função é `is_catalog_admin()`. Ela confere se a pessoa é administradora olhando um campo da própria conta (`app_metadata.role = catalog_admin`). Ninguém tem esse papel ainda.
 
-## 3. Só aparência, sem ação real
-- **Botões de compra** (`CtaButton.tsx`): ficam desativados de propósito, porque o link de pagamento está vazio (`CHECKOUT_URL = null`). Os preços e bônus mostrados em `/concurso` são só texto, não existe venda funcionando.
-- **E-mail de contato** `contato@academiadaenfermagem.com.br` (`lp-content.ts`, linha 19): ainda não confirmei se esse e-mail existe de verdade.
-- **"Trilhas", "Biblioteca" e "Guias"** no menu: só rolam a página inicial até a seção. Cada pacote e guia é um cartão informativo, não abre conteúdo nenhum.
-- **"16 áreas profissionais"** em `/materiais`: é um número escrito fixo, não vem da contagem real do banco.
+**Avisos**
+- **E-mail:** nenhum domínio de envio configurado. Só saem os e-mails padrão do login (confirmação de conta, troca de senha), não avisos do site.
+- **WhatsApp e SMS:** nenhuma integração. O WhatsApp só aparece citado em textos.
+- **Tarefas agendadas:** nenhuma.
+- **Pagamento:** desligado (`CHECKOUT_URL = null`).
 
-## 4. Os 3 próximos passos mais importantes
-1. **Contas e progresso salvo na nuvem.** Criar telas de entrar e cadastrar (e-mail e Google) e uma área só para alunos. Depois, guardar o histórico de questões e o plano de estudos no banco, ligados à conta de cada pessoa. Isso é a base para liberar acesso depois da compra.
-2. **Banco de questões de verdade para Técnico e Auxiliar.** Levar as questões para o banco, com cargo, banca, ano, disciplina, assunto, dificuldade e comentário. Incluir uma tela simples para você cadastrar questões e um simulado cronometrado por cargo. As 8 questões atuais entram como ponto de partida.
-3. **Encher a Central de Materiais e acertar o visual.** Criar uma tela para você enviar editais e provas, ligados a cada concurso. Trocar as cores verde e dourado de `/materiais` pela paleta azul do site. Mostrar a contagem real de áreas.
+## O que será construído
+1. **Cadastro e login** (`/auth`): e-mail/senha e Google, com "esqueci a senha" e a página `/reset-password`. O topo mostra "Entrar" ou "Minha área / Sair" conforme a pessoa estiver logada. Tudo no visual azul-petróleo atual.
+2. **Ficha do aluno:** cada conta ganha um perfil com nome e telefone opcional, mais um registro de acesso com:
+   - data de início;
+   - vencimento, sempre calculado pelo banco como início + 12 meses (não dá para alterar pelo navegador);
+   - situação: ativo, vence em breve, vencido ou aguardando liberação.
+   O aluno só vê e lê os próprios dados. Ele não consegue mudar as datas.
+3. **Painel do aluno** (`/minha-area`): situação, data de vencimento, dias restantes e atalhos para Questões, Plano e Materiais. Quando faltar 30 dias ou menos, aparece um aviso em destaque dentro do site.
+4. **Painel da administradora** (`/admin/alunos`): lista de alunos com início, vencimento e situação, filtro "vencem em 30 dias", e botões para liberar e renovar o acesso por mais 12 meses. Só quem tiver o papel de administradora entra.
+5. **Aviso fora do site, por e-mail.** Precisa de um domínio de envio verificado. Com isso, uma tarefa diária manda ao aluno um e-mail único "faltam 30 dias" e outro resumo para a administradora. Cada aviso fica registrado para nunca ser enviado duas vezes.
+   - Se o domínio não for configurado, as etapas 1 a 4 funcionam normalmente e o aviso fica apenas dentro do site.
+   - O WhatsApp exigiria uma conta comercial (WhatsApp Business ou Twilio) e não está no plano.
 
-Depois disso: colocar seu link de pagamento e liberar o acesso aos alunos que compraram.
+## Ordem de entrega
+Etapas 1 e 2 → etapa 3 → etapa 4 → etapa 5. Cada etapa pode ser testada antes da próxima.
+
+## A decisão que preciso de você
+**Quando começa a contar os 12 meses**, já que ainda não existe pagamento?
+- **A) A administradora libera manualmente** (recomendado). A pessoa se cadastra, fica "aguardando liberação", e a contagem começa no dia em que você libera. Quando o pagamento existir, ele poderá liberar automaticamente.
+- **B) No dia do cadastro.** Qualquer pessoa que criar conta ganha 12 meses na hora, de graça.
+
+Também vou precisar do **e-mail da administradora** para dar esse acesso a ela. Para o aviso por e-mail, será preciso configurar o domínio de envio (por exemplo, `academiadaenfermagem.com.br`) em um passo guiado.
 
 ## Detalhes técnicos
-- Passo 1: rota `/auth` e layout `_authenticated`; tabelas `profiles`, `question_attempts` e `study_plans` com RLS; migrar os dados do localStorage no primeiro login.
-- Passo 2: tabela `questions` (com `role` técnico/auxiliar, `board_id`, `year`), e `user_roles` com papel admin protegendo o cadastro.
-- Passo 3: envio para o bucket `concursenf-materiais`, que já existe. Usar os tokens do `src/styles.css` no lugar das cores hex.
-- `/materiais` hoje lê o banco com `useEffect` e `supabase as any`. Vale migrar para loader com `ensureQueryData` e usar os tipos gerados.
-
-Diga qual passo você quer começar e eu faço.
+- Tabelas:
+  - `profiles` e `user_roles` (com o enum `app_role`), ligadas a `auth.users` e apagadas junto com a conta;
+  - `student_access` com `user_id`, `starts_at`, `expires_at` (preenchido por trigger: starts_at + 12 meses), `status` e `granted_by`;
+  - `access_notifications`, com chave única por acesso e tipo de aviso, para não repetir envios.
+- Cada tabela recebe GRANT e RLS próprios: o dono só lê o que é dele; `has_role(auth.uid(),'admin')` dá leitura e escrita à administradora. A situação é calculada pela data na hora da consulta, sem tarefa agendada só para isso.
+- Um trigger em `auth.users` cria o perfil (e, na opção B, o acesso).
+- Liberar e renovar passam por `createServerFn` com `requireSupabaseAuth` e conferência de `has_role`.
+- Rotas: `/auth` e `/reset-password` são públicas; `_authenticated/minha-area` e `_authenticated/admin/alunos` são protegidas. Um único `onAuthStateChange` fica em `__root.tsx`.
+- E-mail: estrutura de modelos do Lovable, mais a rota `/api/public/jobs/avisos-vencimento` protegida por `authenticateCronRequest`, chamada uma vez por dia por uma tarefa agendada.
+- `is_catalog_admin()` continua como está para a Central de Materiais. Pode ser unificado com `has_role` depois.
+- Nada será publicado.
