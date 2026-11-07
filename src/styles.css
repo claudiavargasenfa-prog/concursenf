@@ -19,8 +19,6 @@
  */
 
 @theme inline {
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -80,6 +78,8 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.02 220);
   --primary: oklch(0.623 0.111 216.4);
+  --success: oklch(0.62 0.17 150);
+  --success-foreground: oklch(0.99 0 0);
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.91 0.025 215);
   --secondary-foreground: oklch(0.2 0.02 220);
