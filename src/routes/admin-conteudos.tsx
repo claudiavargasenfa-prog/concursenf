@@ -49,6 +49,9 @@ function AdminExamContentPage() {
     setError("");
     try {
       const db = supabase as any;
+      const { data: adminAllowed, error: permissionError } = await db.rpc("is_catalog_admin");
+      if (permissionError) throw permissionError;
+      if (!adminAllowed) throw new Error("Acesso administrativo não liberado. Entre com sua conta e solicite a ativação do perfil de administradora.");
       const [c, q, f] = await Promise.all([
         db.from("exam_content_items").select("id", { count: "exact", head: true }),
         db.from("exam_questions").select("id", { count: "exact", head: true }),
