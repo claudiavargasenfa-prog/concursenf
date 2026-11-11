@@ -5,7 +5,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
 
-type ContentItem = { id: string; audience: string; subject: string; topic: string; content_type: string; title: string; summary: string | null; body: string | null; resource_url: string | null; source_reference: string | null };
+type ContentItem = { id: string; audience: string; subject: string; topic: string; content_type: string; title: string; summary: string | null; body: string | null; resource_url: string | null; storage_path: string | null; source_reference: string | null };
 type Flashcard = { id: string; audience: string; subject: string; topic: string; front: string; back: string; source_reference: string | null };
 
 export const Route = createFileRoute("/biblioteca-concursos")({
@@ -31,11 +31,18 @@ function ExamLibraryPage() {
       try {
         const db = supabase as any;
         const [contentResult, cardResult] = await Promise.all([
-          db.from("exam_content_items").select("id,audience,subject,topic,content_type,title,summary,body,resource_url,source_reference").eq("exam_slug", "ebserh-hubrasil").eq("published", true).order("subject").order("sort_order"),
+          db.from("exam_content_items").select("id,audience,subject,topic,content_type,title,summary,body,resource_url,storage_path,source_reference").eq("exam_slug", "ebserh-hubrasil").eq("published", true).order("subject").order("sort_order"),
           db.from("exam_flashcards").select("id,audience,subject,topic,front,back,source_reference").eq("exam_slug", "ebserh-hubrasil").eq("published", true).order("subject"),
         ]);
         if (contentResult.error || cardResult.error) throw contentResult.error || cardResult.error;
-        setItems((contentResult.data ?? []) as ContentItem[]);
+        const rawItems = (contentResult.data ?? []) as ContentItem[];
+        const signedItems = await Promise.all(rawItems.map(async (item) => {
+          if (!item.storage_path) return item;
+          const { data, error } = await db.storage.from("concursenf-materiais").createSignedUrl(item.storage_path, 3600);
+          if (error || !data?.signedUrl) return item;
+          return { ...item, resource_url: data.signedUrl };
+        }));
+        setItems(signedItems);
         setCards((cardResult.data ?? []) as Flashcard[]);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Não foi possível carregar os conteúdos.");
