@@ -164,7 +164,8 @@ function QuestionsPage() {
             <section>
               <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-xs font-extrabold uppercase tracking-[.15em] text-primary"><BookOpenCheck className="size-4" /> Treino por questões</span>
               <h1 className="mt-5 text-4xl font-black leading-tight tracking-tight sm:text-5xl">Pratique. Corrija. <span className="text-primary">Evolua.</span></h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">Resolva questões por disciplina, assunto e dificuldade. As questões publicadas para EBSERH e HU Brasil entram automaticamente neste banco, com gabarito comentado e referência.</p>\n              {bankNotice && <p className="mt-3 rounded-xl border border-border bg-muted p-3 text-xs text-muted-foreground">{bankNotice}</p>}
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">Resolva questões por disciplina, assunto e dificuldade. As questões publicadas para EBSERH e HU Brasil entram automaticamente neste banco, com gabarito comentado e referência.</p>
+              {bankNotice && <p className="mt-3 rounded-xl border border-border bg-muted p-3 text-xs text-muted-foreground">{bankNotice}</p>}
 
               {!session.length && !finished && <div className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
                 <h2 className="flex items-center gap-2 text-xl font-extrabold"><Target className="size-5 text-primary" /> Configure seu treino</h2>
