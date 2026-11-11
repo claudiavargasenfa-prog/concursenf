@@ -11,6 +11,7 @@ import {
 import { CtaButton } from "@/components/lp/CtaButton";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { CmsSections } from "@/components/site/CmsSections";
 import {
   AUDIENCE, AUTHOR, BENEFITS, BRAND, GUIDES, PACKS, SITE_FAQ, TAGLINE,
 } from "@/lib/site-content";
@@ -277,6 +278,7 @@ function HomePage() {
             <div className="grid gap-7 md:grid-cols-[1fr_auto] md:items-center"><div><p className="text-xs font-extrabold uppercase tracking-[.2em] opacity-80">Seu próximo passo</p><h2 className="mt-3 max-w-2xl text-3xl font-black tracking-tight sm:text-4xl">Comece organizando seus estudos hoje.</h2><p className="mt-3 max-w-xl text-sm leading-7 opacity-90">Explore as disciplinas, conheça os materiais e escolha o caminho que faz sentido para sua preparação.</p></div><a href="#biblioteca" className="inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-card px-7 py-4 text-sm font-extrabold text-primary transition hover:-translate-y-1 hover:shadow-xl">Acessar biblioteca <ArrowRight className="size-4" /></a></div>
           </div>
         </section>
+        <CmsSections page="home" />
       </main>
       <Footer />
     </>
