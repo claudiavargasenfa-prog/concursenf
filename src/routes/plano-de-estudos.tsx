@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, BookOpenCheck, CalendarDays, CheckCircle2, Circle, Clock3, RotateCcw, Sparkles, Target } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { CmsSections } from "@/components/site/CmsSections";
 import { CONTENT_GROUPS } from "@/lib/lp-content";
 
 const STORAGE_KEY = "concursenf-study-plan-v1";
@@ -194,6 +195,7 @@ function StudyPlanPage() {
           </div>
         </div>
       </main>
+      <CmsSections page="academicos" />
       <Footer />
     </>
   );
