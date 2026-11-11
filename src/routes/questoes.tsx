@@ -34,6 +34,7 @@ export const Route = createFileRoute("/questoes")({
 function QuestionsPage() {
   const [discipline, setDiscipline] = useState("Todas as disciplinas");
   const [difficulty, setDifficulty] = useState("Todas");
+  const [audience, setAudience] = useState("todos");
   const [session, setSession] = useState<PracticeQuestion[]>([]);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
@@ -66,13 +67,14 @@ function QuestionsPage() {
       try {
         const { data, error } = await (supabase as any)
           .from("exam_questions")
-          .select("id,subject,topic,difficulty,statement,options,correct_option,explanation,reference")
+          .select("id,audience,subject,topic,difficulty,statement,options,correct_option,explanation,reference")
           .eq("exam_slug", "ebserh-hubrasil")
           .eq("published", true);
         if (error) throw error;
         if (!active || !data?.length) return;
         const remote: PracticeQuestion[] = data.map((item: any) => ({
           id: item.id,
+          audience: item.audience,
           discipline: item.subject,
           topic: item.topic,
           difficulty: item.difficulty,
@@ -98,8 +100,9 @@ function QuestionsPage() {
 
   const available = useMemo(() => questionBank.filter((question) =>
     (discipline === "Todas as disciplinas" || question.discipline === discipline) &&
-    (difficulty === "Todas" || question.difficulty === difficulty),
-  ), [questionBank, discipline, difficulty]);
+    (difficulty === "Todas" || question.difficulty === difficulty) &&
+    (audience === "todos" || !question.audience || question.audience === "todos" || question.audience === audience),
+  ), [questionBank, discipline, difficulty, audience]);
 
   const question = session[current];
   const answered = selected !== null;
@@ -169,10 +172,15 @@ function QuestionsPage() {
 
               {!session.length && !finished && <div className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
                 <h2 className="flex items-center gap-2 text-xl font-extrabold"><Target className="size-5 text-primary" /> Configure seu treino</h2>
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <div className="mt-6 grid gap-4 sm:grid-cols-3">
                   <label className="text-sm font-semibold">Disciplina
                     <select value={discipline} onChange={(event) => setDiscipline(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-border bg-background px-3 text-sm font-normal outline-none focus:border-primary">
                       {disciplines.map((item) => <option key={item}>{item}</option>)}
+                    </select>
+                  </label>
+                  <label className="text-sm font-semibold">Cargo
+                    <select value={audience} onChange={(event) => setAudience(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-border bg-background px-3 text-sm font-normal outline-none focus:border-primary">
+                      <option value="todos">Todos os cargos</option><option value="enfermeiro">Enfermeiro</option><option value="tecnico">Técnico de Enfermagem</option><option value="auxiliar">Auxiliar de Enfermagem</option>
                     </select>
                   </label>
                   <label className="text-sm font-semibold">Nível de dificuldade
