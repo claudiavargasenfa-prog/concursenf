@@ -31,6 +31,7 @@ function AdminExamContentPage() {
   const [body, setBody] = useState("");
   const [contentType, setContentType] = useState("texto");
   const [resourceUrl, setResourceUrl] = useState("");
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [source, setSource] = useState("");
   const [statement, setStatement] = useState("");
   const [optionsText, setOptionsText] = useState("A|\nB|\nC|\nD|");
@@ -66,7 +67,7 @@ function AdminExamContentPage() {
   useEffect(() => { void loadCounts(); }, []);
 
   function resetForm() {
-    setTitle(""); setSummary(""); setBody(""); setResourceUrl(""); setSource("");
+    setTitle(""); setSummary(""); setBody(""); setResourceUrl(""); setPdfFile(null); setSource("");
     setStatement(""); setOptionsText("A|\nB|\nC|\nD|"); setCorrect("A");
     setExplanation(""); setFront(""); setBack(""); setYear(""); setPublished(false);
   }
@@ -79,10 +80,20 @@ function AdminExamContentPage() {
       const common = { exam_slug: "ebserh-hubrasil", audience, subject: subject.trim(), topic: topic.trim(), published: published };
       let result;
       if (tab === "conteudo") {
-        if (["pdf", "audio", "video", "link"].includes(contentType) && !resourceUrl.trim()) throw new Error("Informe o endereço do arquivo ou recurso.");
+        if (["audio", "video", "link"].includes(contentType) && !resourceUrl.trim()) throw new Error("Informe o endereço do recurso.");
+        if (contentType === "pdf" && !resourceUrl.trim() && !pdfFile) throw new Error("Envie um arquivo PDF ou informe um endereço externo.");
+        let storagePath: string | null = null;
+        if (contentType === "pdf" && pdfFile) {
+          if (pdfFile.type !== "application/pdf") throw new Error("O arquivo precisa estar no formato PDF.");
+          if (pdfFile.size > 50 * 1024 * 1024) throw new Error("O PDF deve ter no máximo 50 MB.");
+          const safeName = pdfFile.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+          storagePath = `exam-content/ebserh-hubrasil/${Date.now()}-${safeName}`;
+          const upload = await db.storage.from("concursenf-materiais").upload(storagePath, pdfFile, { contentType: "application/pdf", upsert: false });
+          if (upload.error) throw upload.error;
+        }
         result = await db.from("exam_content_items").insert({
           ...common, title: title.trim(), summary: summary.trim() || null, body: body.trim() || null,
-          content_type: contentType, resource_url: resourceUrl.trim() || null,
+          content_type: contentType, resource_url: resourceUrl.trim() || null, storage_path: storagePath,
           source_reference: source.trim() || null,
         });
       } else if (tab === "questao") {
@@ -157,7 +168,8 @@ function AdminExamContentPage() {
               </div>
               <label className={labelClass}>Resumo<textarea className={inputClass} rows={2} value={summary} onChange={(e) => setSummary(e.target.value)} placeholder="Descrição curta para o aluno" /></label>
               <label className={labelClass}>Conteúdo / texto da aula<textarea className={inputClass} rows={9} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Cole ou escreva o conteúdo. Para PDF, áudio, vídeo ou link, informe também o endereço do recurso." /></label>
-              {contentType !== "texto" && contentType !== "mapa_mental" && <label className={labelClass}>Endereço do arquivo ou recurso<input className={inputClass} type="url" value={resourceUrl} onChange={(e) => setResourceUrl(e.target.value)} required placeholder="https://..." /></label>}
+              {contentType === "pdf" && <div className="grid gap-4 sm:grid-cols-2"><label className={labelClass}>Enviar arquivo PDF (até 50 MB)<input className={inputClass} type="file" accept="application/pdf,.pdf" onChange={(e) => setPdfFile(e.target.files?.[0] ?? null)} /></label><label className={labelClass}>Ou endereço externo do PDF<input className={inputClass} type="url" value={resourceUrl} onChange={(e) => setResourceUrl(e.target.value)} placeholder="https://..." /></label></div>}
+              {["audio", "video", "link"].includes(contentType) && <label className={labelClass}>Endereço do recurso<input className={inputClass} type="url" value={resourceUrl} onChange={(e) => setResourceUrl(e.target.value)} required placeholder="https://..." /></label>}
             </>}
 
             {tab === "questao" && <>
