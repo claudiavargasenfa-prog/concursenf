@@ -29,7 +29,7 @@ function CadastroPage() {
     setErrorMessage("");
     setSuccessMessage("");
 
-    const normalizedName = fullName.trim().replace(/\\s+/g, " ");
+    const normalizedName = fullName.trim().replace(/\s+/g, " ");
     const normalizedEmail = email.trim().toLowerCase();
 
     if (normalizedName.length < 3) {
@@ -167,7 +167,7 @@ function CadastroPage() {
 
               {errorMessage && <p role="alert" aria-live="polite" className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm leading-5 text-destructive">{errorMessage}</p>}
 
-              <button type="submit" disabled={loading} className="inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-extrabold text-primary-foreground shadow-lg shadow-primary/15 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
+              <button type="submit" disabled={loading} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-extrabold text-primary-foreground shadow-lg shadow-primary/15 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
                 {loading ? "Criando sua conta..." : "Criar minha conta"}
               </button>
               <p className="text-center text-xs leading-5 text-muted-foreground">Depois de confirmar seu e-mail, você poderá utilizar os dados cadastrados para entrar na plataforma. A tela de login será integrada na próxima etapa.</p>
