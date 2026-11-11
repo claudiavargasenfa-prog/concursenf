@@ -6,7 +6,8 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { PRACTICE_QUESTIONS, QUESTION_DISCIPLINES, type PracticeQuestion } from "@/lib/practice-questions";
+import { supabase } from "@/integrations/supabase/client";
+import { PRACTICE_QUESTIONS, type PracticeQuestion } from "@/lib/practice-questions";
 
 const HISTORY_KEY = "concursenf-question-history-v1";
 
@@ -41,6 +42,8 @@ function QuestionsPage() {
   const [showHistory, setShowHistory] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [questionBank, setQuestionBank] = useState<PracticeQuestion[]>(PRACTICE_QUESTIONS);
+  const [bankNotice, setBankNotice] = useState("");
 
   useEffect(() => {
     try {
@@ -60,7 +63,7 @@ function QuestionsPage() {
   const available = useMemo(() => PRACTICE_QUESTIONS.filter((question) =>
     (discipline === "Todas as disciplinas" || question.discipline === discipline) &&
     (difficulty === "Todas" || question.difficulty === difficulty),
-  ), [discipline, difficulty]);
+  ), [questionBank, discipline, difficulty]);
 
   const question = session[current];
   const answered = selected !== null;
@@ -125,14 +128,14 @@ function QuestionsPage() {
             <section>
               <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-xs font-extrabold uppercase tracking-[.15em] text-primary"><BookOpenCheck className="size-4" /> Treino por questões</span>
               <h1 className="mt-5 text-4xl font-black leading-tight tracking-tight sm:text-5xl">Pratique. Corrija. <span className="text-primary">Evolua.</span></h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">Resolva questões por disciplina, entenda os comentários de cada alternativa e acompanhe seu histórico de desempenho. O banco inicial é demonstrativo e será ampliado com revisão técnica e referências.</p>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">Resolva questões por disciplina, assunto e dificuldade. As questões publicadas para EBSERH e HU Brasil entram automaticamente neste banco, com gabarito comentado e referência.</p>\n              {bankNotice && <p className="mt-3 rounded-xl border border-border bg-muted p-3 text-xs text-muted-foreground">{bankNotice}</p>}
 
               {!session.length && !finished && <div className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
                 <h2 className="flex items-center gap-2 text-xl font-extrabold"><Target className="size-5 text-primary" /> Configure seu treino</h2>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   <label className="text-sm font-semibold">Disciplina
                     <select value={discipline} onChange={(event) => setDiscipline(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-border bg-background px-3 text-sm font-normal outline-none focus:border-primary">
-                      {QUESTION_DISCIPLINES.map((item) => <option key={item}>{item}</option>)}
+                      {disciplines.map((item) => <option key={item}>{item}</option>)}
                     </select>
                   </label>
                   <label className="text-sm font-semibold">Nível de dificuldade

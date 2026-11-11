@@ -7,6 +7,7 @@ import {
   LibraryBig,
   ListChecks,
   FolderOpen,
+  BookMarked,
   Menu,
   Target,
 } from "lucide-react";
@@ -24,6 +25,7 @@ const mobileLinks = [
   { label: "Concursos", to: "/concurso", icon: Target },
   { label: "Biblioteca", to: "/", hash: "biblioteca", icon: LibraryBig },
   { label: "Materiais", to: "/materiais", icon: FolderOpen },
+  { label: "Biblioteca EBSERH", to: "/biblioteca-concursos", icon: BookMarked },
   { label: "Questões", to: "/questoes", icon: ListChecks },
   { label: "Meu plano", to: "/plano-de-estudos", icon: CalendarDays },
 ] as const;
