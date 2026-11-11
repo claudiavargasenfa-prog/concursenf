@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, CheckCircle2, CircleAlert, FilePlus2, Layers3, ListChecks, LoaderCircle, Save } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, CircleAlert, FilePlus2, Layers3, ListChecks, Save } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
