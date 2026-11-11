@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, FileAudio, FileText, Layers3, Search, Video, ExternalLink, ChevronDown, ChevronUp, LoaderCircle } from "lucide-react";
+import { ArrowLeft, Search, ExternalLink, ChevronDown, ChevronUp, LoaderCircle } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
