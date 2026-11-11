@@ -9,7 +9,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
 
-type Tab = "overview" | "appearance" | "sections" | "media";
+type Tab = "overview" | "appearance" | "content" | "sections" | "media";
 type PageKey = "home" | "concurso" | "academicos" | "global";
 type MediaType = "image" | "audio" | "video" | "youtube";
 type Section = {
@@ -23,6 +23,7 @@ type Media = {
   file_size: number | null; alt_text: string | null; published: boolean;
 };
 type Theme = { primary: string; background: string; foreground: string; accent: string };
+type ContentBlock = { block_key: string; page_key: string; label: string; content: Record<string, unknown> };
 const DEFAULT_THEME: Theme = { primary: "#0798AE", background: "#F7FAFC", foreground: "#17242B", accent: "#DDF3F5" };
 const inputClass = "mt-1.5 min-h-11 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/15";
 const labelClass = "block text-sm font-semibold text-foreground";
@@ -50,6 +51,9 @@ function AdminPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
+  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([]);
+  const [selectedBlockKey, setSelectedBlockKey] = useState("");
+  const [contentDraft, setContentDraft] = useState<Record<string, string>>({});
   const [media, setMedia] = useState<Media[]>([]);
   const [theme, setTheme] = useState<Theme>(DEFAULT_THEME);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -83,29 +87,38 @@ function AdminPage() {
       setAuthorized(false); setChecking(false); return;
     }
     setAuthorized(true);
-    const [settingsResult, sectionsResult, mediaResult] = await Promise.all([
+    const [settingsResult, sectionsResult, mediaResult, blocksResult] = await Promise.all([
       db.from("site_settings").select("setting_value").eq("setting_key", "theme").maybeSingle(),
       db.from("site_sections").select("*").order("page_key").order("sort_order"),
       db.from("site_media").select("*").order("created_at", { ascending: false }),
+      db.from("site_content_blocks").select("*").order("page_key").order("label"),
     ]);
-    if (settingsResult.error || sectionsResult.error || mediaResult.error) {
-      setError((settingsResult.error || sectionsResult.error || mediaResult.error).message);
+    if (settingsResult.error || sectionsResult.error || mediaResult.error || blocksResult.error) {
+      setError((settingsResult.error || sectionsResult.error || mediaResult.error || blocksResult.error).message);
     } else {
       setTheme({ ...DEFAULT_THEME, ...(settingsResult.data?.setting_value ?? {}) });
       setSections((sectionsResult.data ?? []) as Section[]);
       setMedia((mediaResult.data ?? []) as Media[]);
+      const loadedBlocks = (blocksResult.data ?? []) as ContentBlock[];
+      setContentBlocks(loadedBlocks);
+      if (!selectedBlockKey && loadedBlocks.length) { setSelectedBlockKey(loadedBlocks[0].block_key); setContentDraft(toEditableFields(loadedBlocks[0].content)); }
     }
     setChecking(false);
   }
 
   useEffect(() => { void loadData(); }, []);
 
+  function toEditableFields(content: Record<string, unknown>) {
+    return Object.fromEntries(Object.entries(content).map(([key, value]) => [key, Array.isArray(value) ? value.map(String).join("\n") : String(value ?? "")]));
+  }
+
   const stats = useMemo(() => ({
     sections: sections.length,
     active: sections.filter((item) => item.is_active).length,
     media: media.length,
+    blocks: contentBlocks.length,
     published: media.filter((item) => item.published).length,
-  }), [sections, media]);
+  }), [sections, media, contentBlocks]);
 
   function resetSection() {
     setEditingId(null); setPageKey("home"); setSectionKey("bloco-personalizado");
@@ -120,6 +133,25 @@ function AdminPage() {
     setButtonLabel(item.button_label ?? ""); setButtonUrl(item.button_url ?? "");
     setSortOrder(String(item.sort_order)); setActive(item.is_active); setTab("sections");
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function chooseContentBlock(key: string) {
+    setSelectedBlockKey(key);
+    const block = contentBlocks.find((item) => item.block_key === key);
+    setContentDraft(block ? toEditableFields(block.content) : {});
+  }
+
+  async function saveContentBlock(event: FormEvent) {
+    event.preventDefault(); setSaving(true); setMessage(""); setError("");
+    try {
+      const original = contentBlocks.find((item) => item.block_key === selectedBlockKey);
+      if (!original) throw new Error("Selecione um conteúdo para editar.");
+      const content = Object.fromEntries(Object.entries(contentDraft).map(([key, value]) => [key, Array.isArray(original.content[key]) ? value.split("\n").map((line) => line.trim()).filter(Boolean) : value]));
+      const { error: saveError } = await (supabase as any).from("site_content_blocks").update({ content, updated_by: (await (supabase as any).auth.getUser()).data?.user?.id ?? null }).eq("block_key", selectedBlockKey);
+      if (saveError) throw saveError;
+      setMessage("Conteúdo original atualizado."); await loadData();
+    } catch (e) { setError(e instanceof Error ? e.message : "Não foi possível salvar o conteúdo."); }
+    finally { setSaving(false); }
   }
 
   async function saveTheme(event: FormEvent) {
@@ -228,6 +260,7 @@ function AdminPage() {
   const tabs = [
     { id: "overview" as Tab, label: "Visão geral", icon: LayoutDashboard },
     { id: "appearance" as Tab, label: "Aparência", icon: Palette },
+    { id: "content" as Tab, label: "Conteúdo original", icon: Pencil },
     { id: "sections" as Tab, label: "Seções e textos", icon: Pencil },
     { id: "media" as Tab, label: "Imagens e mídia", icon: ImagePlus },
   ];
@@ -265,7 +298,21 @@ function AdminPage() {
           <article className="rounded-2xl border border-border bg-card p-6"><Globe className="size-7 text-primary" /><h2 className="mt-3 text-lg font-black">Áreas já existentes</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Os cadastros especializados continuam disponíveis nos painéis próprios.</p><div className="mt-4 flex flex-wrap gap-3 text-sm font-bold"><Link to="/admin-conteudos" className="text-primary">Conteúdos EBSERH</Link><Link to="/materiais" className="text-primary">Central de materiais</Link><Link to="/questoes" className="text-primary">Questões</Link></div></article>
         </div>}
 
-        {tab === "appearance" && <form onSubmit={saveTheme} className="mt-6 max-w-3xl rounded-2xl border border-border bg-card p-5 sm:p-7">
+
+        {tab === "content" && <div className="mt-6 grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
+          <aside className="rounded-2xl border border-border bg-card p-4">
+            <h2 className="font-black">Páginas e blocos</h2>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">Edite textos que já fazem parte do site, sem criar uma seção nova.</p>
+            <div className="mt-4 space-y-2">{contentBlocks.map((block) => <button key={block.block_key} type="button" onClick={() => chooseContentBlock(block.block_key)} className={"w-full rounded-xl border px-3 py-3 text-left text-sm " + (selectedBlockKey===block.block_key ? "border-primary bg-primary/5" : "border-border hover:bg-muted")}><span className="block text-[10px] font-extrabold uppercase tracking-wider text-primary">{block.page_key}</span><span className="mt-1 block font-bold">{block.label}</span></button>)}</div>
+          </aside>
+          <form onSubmit={saveContentBlock} className="rounded-2xl border border-border bg-card p-5 sm:p-7">
+            <h2 className="text-xl font-black">{contentBlocks.find((block)=>block.block_key===selectedBlockKey)?.label ?? "Selecione um bloco"}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Altere os campos abaixo. Em listas, escreva um item por linha. A imagem pode receber uma URL pública.</p>
+            <div className="mt-5 grid gap-4 md:grid-cols-2">{Object.entries(contentDraft).map(([key,value]) => <label key={key} className={labelClass}><span className="break-all">{key}</span>{value.length>120||value.includes("\n")?<textarea className={inputClass} rows={Math.min(8,Math.max(3,value.split("\n").length))} value={value} onChange={(e)=>setContentDraft((old)=>({...old,[key]:e.target.value}))}/>:<input className={inputClass} value={value} onChange={(e)=>setContentDraft((old)=>({...old,[key]:e.target.value}))}/>}</label>)}</div>
+            <button disabled={saving||!selectedBlockKey} className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-extrabold text-primary-foreground disabled:opacity-60"><Save className="size-4"/>{saving?"Salvando...":"Salvar conteúdo"}</button>
+          </form>
+        </div>}
+\n        {tab === "appearance" && <form onSubmit={saveTheme} className="mt-6 max-w-3xl rounded-2xl border border-border bg-card p-5 sm:p-7">
           <h2 className="text-xl font-black">Cores globais</h2><p className="mt-2 text-sm text-muted-foreground">Escolha as cores da marca. A prévia abaixo mostra a combinação antes de salvar.</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {([{key:"primary",label:"Cor principal"},{key:"background",label:"Fundo das páginas"},{key:"foreground",label:"Texto principal"},{key:"accent",label:"Cor de destaque"}] as const).map(({key,label}) => <label key={key} className={labelClass}>{label}<span className="mt-1.5 flex h-12 items-center gap-3 rounded-xl border border-border bg-background p-2"><input type="color" value={theme[key]} onChange={(e) => setTheme((old) => ({...old,[key]:e.target.value}))} className="size-8 cursor-pointer rounded border-0 bg-transparent" /><input className="min-w-0 flex-1 bg-transparent text-sm font-mono uppercase outline-none" value={theme[key]} onChange={(e) => setTheme((old) => ({...old,[key]:e.target.value}))} pattern="^#[0-9A-Fa-f]{6}$" /></span></label>)}

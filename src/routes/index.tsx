@@ -12,6 +12,7 @@ import { CtaButton } from "@/components/lp/CtaButton";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CmsSections } from "@/components/site/CmsSections";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import {
   AUDIENCE, AUTHOR, BENEFITS, BRAND, GUIDES, PACKS, SITE_FAQ, TAGLINE,
 } from "@/lib/site-content";
@@ -44,6 +45,7 @@ const pathIcons = [Stethoscope, HeartPulse, GraduationCap, LibraryBig];
 
 function HomePage() {
   const [search, setSearch] = useState("");
+  const homeContent = useSiteContent("home.hero", { title: "Preparação inteligente para concursos de enfermagem", description: "Organize seus estudos com conteúdos esquematizados, trilhas por disciplina e materiais para técnicos e enfermeiros.", button: "Conheça a plataforma", image: "" });
   const normalizedSearch = search.trim().toLocaleLowerCase("pt-BR");
   const filteredGroups = useMemo(
     () => CONTENT_GROUPS.map((group) => ({
@@ -71,14 +73,14 @@ function HomePage() {
               </div>
               <p className="mt-7 text-sm font-bold uppercase tracking-[.22em] text-primary">ConcursEnf · conhecimento que direciona</p>
               <h1 className="mt-4 max-w-2xl text-4xl font-black leading-[1.06] tracking-tight sm:text-5xl lg:text-6xl">
-                Sua próxima conquista começa com um <span className="text-primary">plano de estudos inteligente.</span>
+                {homeContent.title}
               </h1>
               <p className="mt-6 max-w-xl text-base leading-8 text-soft-muted sm:text-lg">
-                Prepare-se para concursos de enfermagem com conteúdos organizados, revisão objetiva e uma biblioteca pensada para a rotina de quem cuida.
+                {homeContent.description}
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a href="#biblioteca" className="group inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-primary px-7 py-4 text-sm font-extrabold text-primary-foreground shadow-[0_14px_35px_-16px_var(--primary)] transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-                  Explorar conteúdos <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                  {homeContent.button} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                 </a>
                 <Link to="/concurso" className="inline-flex min-h-14 items-center justify-center gap-2 rounded-full border border-primary/40 bg-card/70 px-7 py-4 text-sm font-bold text-primary transition duration-300 hover:-translate-y-1 hover:bg-card">
                   Conhecer o Combo Aprovação <ChevronRight className="size-4" />
