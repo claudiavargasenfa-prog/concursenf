@@ -27,7 +27,7 @@ const mobileLinks = [
   { label: "Materiais", to: "/materiais", icon: FolderOpen },
   { label: "Biblioteca EBSERH", to: "/biblioteca-concursos", icon: BookMarked },
   { label: "Questões", to: "/questoes", icon: ListChecks },
-  { label: "Meu plano", to: "/plano-de-estudos", icon: CalendarDays },
+  { label: "Meu plano", to: "/plano-de-estudos", icon: CalendarDays },\n  { label: "Administração", to: "/admin", icon: Settings2 },
 ] as const;
 
 export function Header() {
@@ -67,7 +67,7 @@ export function Header() {
           <Link to="/plano-de-estudos" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-primary">
             <CalendarDays className="size-4" /> Meu plano
           </Link>
-          <Link to="/entrar" className="inline-flex items-center whitespace-nowrap rounded-full border border-border px-4 py-2 text-xs font-extrabold text-foreground transition hover:bg-accent">Entrar</Link>
+          <Link to="/admin" className="inline-flex items-center gap-1 whitespace-nowrap text-muted-foreground transition hover:text-primary"><Settings2 className="size-4" /> Administração</Link>\n          <Link to="/entrar" className="inline-flex items-center whitespace-nowrap rounded-full border border-border px-4 py-2 text-xs font-extrabold text-foreground transition hover:bg-accent">Entrar</Link>
           <Link to="/cadastro" className="inline-flex items-center whitespace-nowrap rounded-full border border-primary/40 px-4 py-2 text-xs font-extrabold text-primary transition hover:bg-primary/5">Criar conta</Link>
           <Link to="/concurso" className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-primary px-3.5 py-2.5 text-xs font-extrabold text-primary-foreground shadow-md transition hover:-translate-y-0.5 hover:shadow-lg">
             Combo Aprovação <ArrowUpRight className="size-4" />
