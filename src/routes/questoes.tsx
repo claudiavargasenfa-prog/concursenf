@@ -60,7 +60,43 @@ function QuestionsPage() {
     if (hydrated) window.localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   }, [history, hydrated]);
 
-  const available = useMemo(() => PRACTICE_QUESTIONS.filter((question) =>
+  useEffect(() => {
+    let active = true;
+    async function loadPublishedQuestions() {
+      try {
+        const { data, error } = await (supabase as any)
+          .from("exam_questions")
+          .select("id,subject,topic,difficulty,statement,options,correct_option,explanation,reference")
+          .eq("exam_slug", "ebserh-hubrasil")
+          .eq("published", true);
+        if (error) throw error;
+        if (!active || !data?.length) return;
+        const remote: PracticeQuestion[] = data.map((item: any) => ({
+          id: item.id,
+          discipline: item.subject,
+          topic: item.topic,
+          difficulty: item.difficulty,
+          statement: item.statement,
+          options: item.options,
+          answer: item.correct_option,
+          explanation: item.explanation,
+          reference: item.reference || "Referência não informada.",
+        }));
+        setQuestionBank([...remote, ...PRACTICE_QUESTIONS]);
+      } catch {
+        if (active) setBankNotice("Banco de questões EBSERH/HU Brasil ainda não está conectado. As questões demonstrativas continuam disponíveis.");
+      }
+    }
+    void loadPublishedQuestions();
+    return () => { active = false; };
+  }, []);
+
+  const disciplines = useMemo(
+    () => ["Todas as disciplinas", ...new Set(questionBank.map((item) => item.discipline))],
+    [questionBank],
+  );
+
+  const available = useMemo(() => questionBank.filter((question) =>
     (discipline === "Todas as disciplinas" || question.discipline === discipline) &&
     (difficulty === "Todas" || question.difficulty === difficulty),
   ), [questionBank, discipline, difficulty]);
@@ -128,7 +164,8 @@ function QuestionsPage() {
             <section>
               <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-xs font-extrabold uppercase tracking-[.15em] text-primary"><BookOpenCheck className="size-4" /> Treino por questões</span>
               <h1 className="mt-5 text-4xl font-black leading-tight tracking-tight sm:text-5xl">Pratique. Corrija. <span className="text-primary">Evolua.</span></h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">Resolva questões por disciplina, assunto e dificuldade. As questões publicadas para EBSERH e HU Brasil entram automaticamente neste banco, com gabarito comentado e referência.</p>\n              {bankNotice && <p className="mt-3 rounded-xl border border-border bg-muted p-3 text-xs text-muted-foreground">{bankNotice}</p>}
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">Resolva questões por disciplina, assunto e dificuldade. As questões publicadas para EBSERH e HU Brasil entram automaticamente neste banco, com gabarito comentado e referência.</p>
+              {bankNotice && <p className="mt-3 rounded-xl border border-border bg-muted p-3 text-xs text-muted-foreground">{bankNotice}</p>}
 
               {!session.length && !finished && <div className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
                 <h2 className="flex items-center gap-2 text-xl font-extrabold"><Target className="size-5 text-primary" /> Configure seu treino</h2>
