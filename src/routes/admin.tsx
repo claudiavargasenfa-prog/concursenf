@@ -9,7 +9,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
 
-type Tab = "overview" | "appearance" | "sections" | "media";
+type Tab = "overview" | "appearance" | "content" | "sections" | "media";
 type PageKey = "home" | "concurso" | "academicos" | "global";
 type MediaType = "image" | "audio" | "video" | "youtube";
 type Section = {
@@ -93,8 +93,8 @@ function AdminPage() {
       db.from("site_media").select("*").order("created_at", { ascending: false }),
       db.from("site_content_blocks").select("*").order("page_key").order("label"),
     ]);
-    if (settingsResult.error || sectionsResult.error || mediaResult.error) {
-      setError((settingsResult.error || sectionsResult.error || mediaResult.error).message);
+    if (settingsResult.error || sectionsResult.error || mediaResult.error || blocksResult.error) {
+      setError((settingsResult.error || sectionsResult.error || mediaResult.error || blocksResult.error).message);
     } else {
       setTheme({ ...DEFAULT_THEME, ...(settingsResult.data?.setting_value ?? {}) });
       setSections((sectionsResult.data ?? []) as Section[]);
@@ -142,10 +142,12 @@ function AdminPage() {
   async function saveContentBlock(event: FormEvent) {
     event.preventDefault(); setSaving(true); setMessage(""); setError("");
     try {
-      const original = contentBlocks.find((item) => item.block_key === selectedBlockKey);\n      if (!original) throw new Error("Selecione um conteúdo para editar.");
-      const content = Object.fromEntries(Object.entries(contentDraft).map(([key, value]) => [key, Array.isArray(original.content[key]) ? value.split("\\n").map((line) => line.trim()).filter(Boolean) : value]));
+      const original = contentBlocks.find((item) => item.block_key === selectedBlockKey);
+      if (!original) throw new Error("Selecione um conteúdo para editar.");
+      const content = Object.fromEntries(Object.entries(contentDraft).map(([key, value]) => [key, Array.isArray(original.content[key]) ? value.split("\n").map((line) => line.trim()).filter(Boolean) : value]));
       const { error: saveError } = await (supabase as any).from("site_content_blocks").update({ content, updated_by: (await (supabase as any).auth.getUser()).data?.user?.id ?? null }).eq("block_key", selectedBlockKey);
-      if (saveError) throw saveError;\n      setMessage("Conteúdo original atualizado."); await loadData();
+      if (saveError) throw saveError;
+      setMessage("Conteúdo original atualizado."); await loadData();
     } catch (e) { setError(e instanceof Error ? e.message : "Não foi possível salvar o conteúdo."); }\n    finally { setSaving(false); }
   }
 
