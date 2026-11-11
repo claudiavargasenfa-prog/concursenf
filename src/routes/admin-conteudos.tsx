@@ -76,7 +76,7 @@ function AdminExamContentPage() {
     setSaving(true); setError(""); setMessage("");
     try {
       const db = supabase as any;
-      const common = { exam_slug: "ebserh-hubrasil", audience, subject: subject.trim(), topic: topic.trim(), published: published, source_reference: source.trim() || null };
+      const common = { exam_slug: "ebserh-hubrasil", audience, subject: subject.trim(), topic: topic.trim(), published: published };
       let result;
       if (tab === "conteudo") {
         if (["pdf", "audio", "video", "link"].includes(contentType) && !resourceUrl.trim()) throw new Error("Informe o endereço do arquivo ou recurso.");
