@@ -21,6 +21,7 @@ function getYoutubeEmbed(url: string) {
 
 export function CmsSections({ page }: { page: PageKey }) {
   const [sections, setSections] = useState<CmsSection[]>([]);
+  const [resolvedMedia, setResolvedMedia] = useState<Record<string, string>>({});
   useEffect(() => {
     let active = true;
     async function load() {
@@ -28,7 +29,16 @@ export function CmsSections({ page }: { page: PageKey }) {
         .select("id,page_key,title,subtitle,body,media_url,media_type,button_label,button_url,sort_order")
         .in("page_key", [page, "global"]).eq("is_active", true).order("sort_order");
       if (!active || error) return;
-      setSections((data ?? []) as CmsSection[]);
+      const loaded = (data ?? []) as CmsSection[];
+      const resolved = await Promise.all(loaded.map(async (section) => {
+        if (!section.media_url?.startsWith("storage:")) return [section.id, section.media_url ?? ""] as const;
+        const path = section.media_url.slice("storage:".length);
+        const { data: signed, error: signedError } = await (supabase as any).storage.from("concursenf-site").createSignedUrl(path, 3600);
+        return [section.id, signedError ? "" : signed?.signedUrl ?? ""] as const;
+      }));
+      if (!active) return;
+      setResolvedMedia(Object.fromEntries(resolved));
+      setSections(loaded);
     }
     void load();
     return () => { active = false; };
@@ -41,10 +51,10 @@ export function CmsSections({ page }: { page: PageKey }) {
         {section.subtitle && <p className="text-xs font-extrabold uppercase tracking-[.18em] text-primary">{section.subtitle}</p>}
         <h2 className="mt-2 text-2xl font-black tracking-tight text-foreground sm:text-3xl">{section.title}</h2>
         {section.body && <div className="mt-4 max-w-3xl whitespace-pre-wrap text-sm leading-7 text-muted-foreground">{section.body}</div>}
-        {section.media_url && section.media_type === "image" && <img src={section.media_url} alt={section.title} loading="lazy" className="mt-7 max-h-[34rem] w-full rounded-2xl object-contain" />}
+        {resolvedMedia[section.id] && section.media_type === "image" && <img src={resolvedMedia[section.id]} alt={section.title} loading="lazy" className="mt-7 max-h-[34rem] w-full rounded-2xl object-contain" />}
         {section.media_url && section.media_type === "audio" && <audio controls preload="none" src={section.media_url} className="mt-6 w-full max-w-2xl" />}
         {section.media_url && section.media_type === "video" && <video controls preload="metadata" src={section.media_url} className="mt-6 aspect-video w-full max-w-4xl rounded-2xl bg-black" />}
-        {section.media_url && section.media_type === "youtube" && getYoutubeEmbed(section.media_url) && <div className="mt-7 aspect-video w-full max-w-4xl overflow-hidden rounded-2xl bg-black"><iframe src={getYoutubeEmbed(section.media_url)} title={section.title} className="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy" /></div>}
+        {section.media_url && section.media_type === "youtube" && getYoutubeEmbed(resolvedMedia[section.id]) && <div className="mt-7 aspect-video w-full max-w-4xl overflow-hidden rounded-2xl bg-black"><iframe src={getYoutubeEmbed(section.media_url)} title={section.title} className="h-full w-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy" /></div>}
         {section.button_label && section.button_url && <a href={section.button_url} className="mt-7 inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-extrabold text-primary-foreground transition hover:opacity-90">{section.button_label}<ExternalLink className="size-4" /></a>}
       </div>
     </section>)}
