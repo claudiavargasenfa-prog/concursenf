@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { CmsSections } from "@/components/site/CmsSections";
 import { Hero } from "@/components/lp/Hero";
 import { Proof } from "@/components/lp/Proof";
 import { Contents } from "@/components/lp/Contents";
@@ -33,6 +34,7 @@ function ConcursoPage() {
         <Proof />
         <Contents />
         <Offer />
+        <CmsSections page="concurso" />
       </main>
       <Footer />
     </>
