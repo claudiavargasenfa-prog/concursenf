@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { CmsSections } from "@/components/site/CmsSections";
 import { supabase } from "@/integrations/supabase/client";
 import { PRACTICE_QUESTIONS, type PracticeQuestion } from "@/lib/practice-questions";
 
@@ -253,6 +254,7 @@ function QuestionsPage() {
           </div>
         </div>
       </main>
+      <CmsSections page="academicos" />
       <Footer />
     </>
   );
