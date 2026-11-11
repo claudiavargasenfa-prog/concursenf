@@ -98,17 +98,23 @@ function AdminPage() {
     } else {
       setTheme({ ...DEFAULT_THEME, ...(settingsResult.data?.setting_value ?? {}) });
       setSections((sectionsResult.data ?? []) as Section[]);
-      setMedia((mediaResult.data ?? []) as Media[]);\n      const loadedBlocks = (blocksResult.data ?? []) as ContentBlock[];\n      setContentBlocks(loadedBlocks);\n      if (!selectedBlockKey && loadedBlocks.length) { setSelectedBlockKey(loadedBlocks[0].block_key); setContentDraft(toEditableFields(loadedBlocks[0].content)); }
+      setMedia((mediaResult.data ?? []) as Media[]);
+      const loadedBlocks = (blocksResult.data ?? []) as ContentBlock[];\n      setContentBlocks(loadedBlocks);\n      if (!selectedBlockKey && loadedBlocks.length) { setSelectedBlockKey(loadedBlocks[0].block_key); setContentDraft(toEditableFields(loadedBlocks[0].content)); }
     }
     setChecking(false);
   }
 
   useEffect(() => { void loadData(); }, []);
 
-  function toEditableFields(content: Record<string, unknown>) {\n    return Object.fromEntries(Object.entries(content).map(([key, value]) => [key, Array.isArray(value) ? value.map(String).join("\\n") : String(value ?? "")]));\n  }\n\n  const stats = useMemo(() => ({
+  function toEditableFields(content: Record<string, unknown>) {
+    return Object.fromEntries(Object.entries(content).map(([key, value]) => [key, Array.isArray(value) ? value.map(String).join("\n") : String(value ?? "")]));
+  }
+
+  const stats = useMemo(() => ({
     sections: sections.length,
     active: sections.filter((item) => item.is_active).length,
-    media: media.length,\n    blocks: contentBlocks.length,
+    media: media.length,
+    blocks: contentBlocks.length,
     published: media.filter((item) => item.published).length,
   }), [sections, media, contentBlocks]);
 
@@ -127,7 +133,23 @@ function AdminPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function chooseContentBlock(key: string) {\n    setSelectedBlockKey(key);\n    const block = contentBlocks.find((item) => item.block_key === key);\n    setContentDraft(block ? toEditableFields(block.content) : {});\n  }\n\n  async function saveContentBlock(event: FormEvent) {\n    event.preventDefault(); setSaving(true); setMessage(""); setError("");\n    try {\n      const original = contentBlocks.find((item) => item.block_key === selectedBlockKey);\n      if (!original) throw new Error("Selecione um conteúdo para editar.");\n      const content = Object.fromEntries(Object.entries(contentDraft).map(([key, value]) => [key, Array.isArray(original.content[key]) ? value.split("\\n").map((line) => line.trim()).filter(Boolean) : value]));\n      const { error: saveError } = await (supabase as any).from("site_content_blocks").update({ content, updated_by: (await (supabase as any).auth.getUser()).data?.user?.id ?? null }).eq("block_key", selectedBlockKey);\n      if (saveError) throw saveError;\n      setMessage("Conteúdo original atualizado."); await loadData();\n    } catch (e) { setError(e instanceof Error ? e.message : "Não foi possível salvar o conteúdo."); }\n    finally { setSaving(false); }\n  }\n\n  async function saveTheme(event: FormEvent) {
+  function chooseContentBlock(key: string) {
+    setSelectedBlockKey(key);
+    const block = contentBlocks.find((item) => item.block_key === key);
+    setContentDraft(block ? toEditableFields(block.content) : {});
+  }
+
+  async function saveContentBlock(event: FormEvent) {
+    event.preventDefault(); setSaving(true); setMessage(""); setError("");
+    try {
+      const original = contentBlocks.find((item) => item.block_key === selectedBlockKey);\n      if (!original) throw new Error("Selecione um conteúdo para editar.");
+      const content = Object.fromEntries(Object.entries(contentDraft).map(([key, value]) => [key, Array.isArray(original.content[key]) ? value.split("\\n").map((line) => line.trim()).filter(Boolean) : value]));
+      const { error: saveError } = await (supabase as any).from("site_content_blocks").update({ content, updated_by: (await (supabase as any).auth.getUser()).data?.user?.id ?? null }).eq("block_key", selectedBlockKey);
+      if (saveError) throw saveError;\n      setMessage("Conteúdo original atualizado."); await loadData();
+    } catch (e) { setError(e instanceof Error ? e.message : "Não foi possível salvar o conteúdo."); }\n    finally { setSaving(false); }
+  }
+
+  async function saveTheme(event: FormEvent) {
     event.preventDefault(); setSaving(true); setMessage(""); setError("");
     try {
       const { error: saveError } = await (supabase as any).from("site_settings").upsert({
@@ -232,7 +254,8 @@ function AdminPage() {
 
   const tabs = [
     { id: "overview" as Tab, label: "Visão geral", icon: LayoutDashboard },
-    { id: "appearance" as Tab, label: "Aparência", icon: Palette },\n    { id: "content" as Tab, label: "Conteúdo original", icon: Pencil },
+    { id: "appearance" as Tab, label: "Aparência", icon: Palette },
+    { id: "content" as Tab, label: "Conteúdo original", icon: Pencil },
     { id: "sections" as Tab, label: "Seções e textos", icon: Pencil },
     { id: "media" as Tab, label: "Imagens e mídia", icon: ImagePlus },
   ];
