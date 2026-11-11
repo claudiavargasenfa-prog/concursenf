@@ -65,6 +65,7 @@ export function Header() {
           <Link to="/plano-de-estudos" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-primary">
             <CalendarDays className="size-4" /> Meu plano
           </Link>
+          <Link to="/cadastro" className="inline-flex items-center rounded-full border border-primary/40 px-4 py-2.5 text-xs font-extrabold text-primary transition hover:bg-primary/5 sm:text-sm">Criar conta</Link>
           <Link to="/concurso" className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-xs font-extrabold text-primary-foreground shadow-md transition hover:-translate-y-0.5 hover:shadow-lg sm:text-sm">
             Combo Aprovação <ArrowUpRight className="size-4" />
           </Link>
@@ -106,9 +107,12 @@ export function Header() {
                   </SheetClose>
                 ))}
                 <SheetClose asChild>
+                  <Link to="/cadastro" className="mt-3 inline-flex min-h-12 items-center justify-center rounded-xl border border-primary/40 px-4 py-3 text-sm font-extrabold text-primary">Criar conta de aluno</Link>
+                </SheetClose>
+                <SheetClose asChild>
                   <Link
                     to="/concurso"
-                    className="mt-3 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground"
                   >
                     Combo Aprovação <ArrowUpRight className="size-4" />
                   </Link>
