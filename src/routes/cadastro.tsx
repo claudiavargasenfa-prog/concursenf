@@ -170,7 +170,7 @@ function CadastroPage() {
               <button type="submit" disabled={loading} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-extrabold text-primary-foreground shadow-lg shadow-primary/15 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
                 {loading ? "Criando sua conta..." : "Criar minha conta"}
               </button>
-              <p className="text-center text-xs leading-5 text-muted-foreground">Depois de confirmar seu e-mail, você poderá utilizar os dados cadastrados para entrar na plataforma. A tela de login será integrada na próxima etapa.</p>
+              <p className="text-center text-sm text-muted-foreground">Já tem cadastro? <Link to="/entrar" className="font-extrabold text-primary hover:underline">Entrar</Link></p>
               <p className="text-center text-xs leading-5 text-muted-foreground">Ao se cadastrar, você confirma que os dados informados são seus e que tem autorização para utilizar este endereço de e-mail.</p>
             </form>
           )}
