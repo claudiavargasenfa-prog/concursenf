@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, CheckCircle2, CircleAlert, FilePlus2, Layers3, ListChecks, Save } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, CircleAlert, FilePlus2, Layers3, ListChecks, Save, Settings2 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
@@ -137,7 +137,7 @@ function AdminExamContentPage() {
     <Header />
     <main className="min-h-screen bg-background px-4 py-10 sm:py-14">
       <div className="mx-auto max-w-5xl">
-        <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline"><ArrowLeft className="size-4" /> Voltar à plataforma</Link>
+        <div className="flex flex-wrap items-center gap-4"><Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline"><ArrowLeft className="size-4" /> Voltar à plataforma</Link><Link to="/admin" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline"><Settings2 className="size-4" /> Administração geral</Link></div>
         <div className="mt-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div><span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-wider text-primary"><FilePlus2 className="size-4" /> Área administrativa</span><h1 className="mt-4 text-3xl font-black sm:text-4xl">Conteúdos EBSERH | HU Brasil</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Cadastre aulas, mapas mentais, arquivos, questões comentadas e flashcards. Organize por cargo, disciplina e assunto.</p></div>
           <button type="button" onClick={() => void loadCounts()} className="min-h-10 rounded-xl border border-border px-4 text-sm font-bold hover:bg-muted">Atualizar dados</button>
