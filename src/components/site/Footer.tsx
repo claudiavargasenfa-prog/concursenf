@@ -2,6 +2,7 @@ import { AUTHOR, BRAND } from "@/lib/site-content";
 import { useSiteContent } from "@/hooks/useSiteContent";
 
 export function Footer() {
+  const content = useSiteContent("global.footer", { brand: BRAND, description: "Materiais esquematizados de enfermagem para a faculdade, o plantão e o concurso.", contact: AUTHOR.contactEmail });
   return (
     <footer className="border-t border-border bg-card px-4 py-10 text-center text-xs text-muted-foreground">
       <p className="text-sm font-bold text-foreground">{content.brand}</p>
