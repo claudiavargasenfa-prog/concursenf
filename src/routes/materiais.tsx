@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { CmsSections } from "@/components/site/CmsSections";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -254,6 +255,7 @@ function MaterialsPage() {
           </section>
         </section>
       </main>
+      <CmsSections page="academicos" />
       <Footer />
     </>
   );
