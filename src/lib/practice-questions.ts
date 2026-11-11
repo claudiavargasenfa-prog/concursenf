@@ -2,6 +2,7 @@ export type QuestionDifficulty = "Básica" | "Intermediária" | "Avançada";
 
 export type PracticeQuestion = {
   id: string;
+  audience?: "todos" | "enfermeiro" | "tecnico" | "auxiliar";
   discipline: string;
   topic: string;
   difficulty: QuestionDifficulty;
