@@ -91,6 +91,9 @@ function HomePage() {
                 <Link to="/questoes" className="inline-flex items-center gap-2 text-sm font-bold text-primary transition hover:gap-3">
                   <ListChecks className="size-4" /> Treine com questões comentadas <ArrowRight className="size-4" />
                 </Link>
+                <Link to="/biblioteca-concursos" className="inline-flex items-center gap-2 text-sm font-bold text-primary transition hover:gap-3">
+                  <BookOpen className="size-4" /> Biblioteca EBSERH / HU Brasil <ArrowRight className="size-4" />
+                </Link>
               </div>
               <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs font-semibold text-soft-muted">
                 <span className="inline-flex items-center gap-2"><CheckCircle2 className="size-4 text-primary" /> Para técnicos e enfermeiros</span>
