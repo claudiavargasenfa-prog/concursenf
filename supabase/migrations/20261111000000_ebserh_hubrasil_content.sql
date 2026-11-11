@@ -80,7 +80,7 @@ create policy "Admins manage exam questions" on public.exam_questions for all to
 
 drop policy if exists "Public reads published exam flashcards" on public.exam_flashcards;
 create policy "Public reads published exam flashcards" on public.exam_flashcards for select using (published);
-drop policy if exists "Admins manage exam flashcards" on public.exam_flashcards for all to authenticated using (public.is_catalog_admin()) with check (public.is_catalog_admin());
+drop policy if exists "Admins manage exam flashcards" on public.exam_flashcards;
 
 create or replace function public.set_exam_content_updated_at()
 returns trigger language plpgsql as $$
