@@ -99,7 +99,9 @@ function AdminPage() {
       setTheme({ ...DEFAULT_THEME, ...(settingsResult.data?.setting_value ?? {}) });
       setSections((sectionsResult.data ?? []) as Section[]);
       setMedia((mediaResult.data ?? []) as Media[]);
-      const loadedBlocks = (blocksResult.data ?? []) as ContentBlock[];\n      setContentBlocks(loadedBlocks);\n      if (!selectedBlockKey && loadedBlocks.length) { setSelectedBlockKey(loadedBlocks[0].block_key); setContentDraft(toEditableFields(loadedBlocks[0].content)); }
+      const loadedBlocks = (blocksResult.data ?? []) as ContentBlock[];
+      setContentBlocks(loadedBlocks);
+      if (!selectedBlockKey && loadedBlocks.length) { setSelectedBlockKey(loadedBlocks[0].block_key); setContentDraft(toEditableFields(loadedBlocks[0].content)); }
     }
     setChecking(false);
   }
@@ -148,7 +150,8 @@ function AdminPage() {
       const { error: saveError } = await (supabase as any).from("site_content_blocks").update({ content, updated_by: (await (supabase as any).auth.getUser()).data?.user?.id ?? null }).eq("block_key", selectedBlockKey);
       if (saveError) throw saveError;
       setMessage("Conteúdo original atualizado."); await loadData();
-    } catch (e) { setError(e instanceof Error ? e.message : "Não foi possível salvar o conteúdo."); }\n    finally { setSaving(false); }
+    } catch (e) { setError(e instanceof Error ? e.message : "Não foi possível salvar o conteúdo."); }
+    finally { setSaving(false); }
   }
 
   async function saveTheme(event: FormEvent) {
