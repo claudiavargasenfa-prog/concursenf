@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowLeft, AudioLines, CheckCircle2, CircleAlert, ExternalLink, FileImage, FileVideo,
   Globe, ImagePlus, LayoutDashboard, LoaderCircle, Palette, Pencil, Plus, Save, Settings2,
-  ShieldCheck, Trash2, Upload, Video, X,
+  ShieldCheck, Trash2, Upload, Video,
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
@@ -138,6 +138,9 @@ function AdminPage() {
   async function saveSection(event: FormEvent) {
     event.preventDefault(); setSaving(true); setMessage(""); setError("");
     try {
+      if (mediaType === "youtube" && mediaUrl && !youtubeEmbed(mediaUrl)) throw new Error("Informe um endereço válido de vídeo do YouTube.");
+      if (mediaUrl && !mediaUrl.startsWith("storage:") && mediaType !== "youtube") { const parsedMedia = new URL(mediaUrl); if (!["https:","http:"].includes(parsedMedia.protocol)) throw new Error("O endereço da mídia precisa usar HTTP ou HTTPS."); }
+      if (buttonUrl && !buttonUrl.startsWith("/") && !/^https?:\\/\\//i.test(buttonUrl)) throw new Error("O destino do botão deve ser uma rota do site ou um endereço HTTP/HTTPS.");
       const payload = {
         page_key: pageKey, section_key: sectionKey.trim(), title: title.trim(),
         subtitle: subtitle.trim() || null, body: body.trim() || null,
