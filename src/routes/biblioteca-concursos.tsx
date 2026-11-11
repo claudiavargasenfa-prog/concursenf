@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Search, ExternalLink, ChevronDown, ChevronUp, LoaderCircle } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { CmsSections } from "@/components/site/CmsSections";
 import { supabase } from "@/integrations/supabase/client";
 
 type ContentItem = { id: string; audience: string; subject: string; topic: string; content_type: string; title: string; summary: string | null; body: string | null; resource_url: string | null; storage_path: string | null; source_reference: string | null };
@@ -107,6 +108,7 @@ function ExamLibraryPage() {
           <div className="mt-10 flex flex-wrap gap-3"><Link to="/questoes" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground">Treinar questões</Link><Link to="/plano-de-estudos" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border px-5 text-sm font-bold">Meu plano de estudos</Link></div>
         </>}
       </div>
+      <CmsSections page="academicos" />
     </main>
     <Footer />
   </>;
