@@ -213,6 +213,7 @@ function QuestionsPage() {
         reference: result.reference ?? null,
       };
       setAnswerResult(normalized);
+      setQuestionBank((previous) => previous.filter((item) => item.id !== question.id));
       setAnswers((previous) => [...previous, {
         questionId: question.id,
         selected,
@@ -227,14 +228,8 @@ function QuestionsPage() {
 
   function nextQuestion() {
     if (!question || !selected || !answerResult) return;
-    const currentAnswer = {
-      questionId: question.id,
-      selected,
-      correct: answerResult.is_correct,
-    };
-    const finalAnswers = [...answers, currentAnswer];
+    const finalAnswers = answers;
     if (current + 1 < session.length) {
-      setAnswers(finalAnswers);
       setCurrent((value) => value + 1);
       setSelected(null);
       setAnswerResult(null);
@@ -274,7 +269,7 @@ function QuestionsPage() {
               <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-xs font-extrabold uppercase tracking-[.15em] text-primary"><BookOpenCheck className="size-4" /> Treino por questões</span>
               <h1 className="mt-5 text-4xl font-black leading-tight tracking-tight sm:text-5xl">Pratique. Corrija. <span className="text-primary">Evolua.</span></h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">Resolva questões por disciplina, assunto e dificuldade. As questões publicadas para EBSERH e HU Brasil entram automaticamente neste banco, com gabarito comentado e referência.</p>
-              {bankNotice && <p className="mt-3 rounded-xl border border-border bg-muted p-3 text-xs text-muted-foreground">{bankNotice}</p>}
+              {bankNotice && <p className="mt-3 rounded-xl border border-border bg-muted p-3 text-xs text-muted-foreground">{bankNotice} {!userId && hydrated && <Link to="/entrar" className="ml-1 font-bold text-primary underline">Entrar na conta</Link>}</p>}
 
               {!session.length && !finished && <div className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
                 <h2 className="flex items-center gap-2 text-xl font-extrabold"><Target className="size-5 text-primary" /> Configure seu treino</h2>
