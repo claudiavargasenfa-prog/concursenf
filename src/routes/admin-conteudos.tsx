@@ -102,7 +102,7 @@ function AdminExamContentPage() {
       } else if (tab === "questao") {
         const options = optionsText.split("\n").map((line) => {
           const [id, ...parts] = line.split("|");
-          return { id: id.trim().toUpperCase(), text: parts.join("|").trim() };
+          return { id: (id ?? "").trim().toUpperCase(), text: parts.join("|").trim() };
         }).filter((option) => option.id && option.text);
         if (options.length < 2) throw new Error("Cadastre pelo menos duas alternativas no formato A|Texto da alternativa.");
         if (!options.some((option) => option.id === correct)) throw new Error("A alternativa correta precisa existir na lista.");
