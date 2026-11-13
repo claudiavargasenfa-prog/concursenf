@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AprendizagemRouteImport } from './routes/aprendizagem'
 import { Route as AdminConteudosRouteImport } from './routes/admin-conteudos'
 import { Route as BibliotecaConcursosRouteImport } from './routes/biblioteca-concursos'
 import { Route as CadastroRouteImport } from './routes/cadastro'
@@ -23,6 +24,11 @@ import { Route as QuestoesRouteImport } from './routes/questoes'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AprendizagemRoute = AprendizagemRouteImport.update({
+  id: '/aprendizagem',
+  path: '/aprendizagem',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -72,6 +78,7 @@ const QuestoesRoute = QuestoesRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/aprendizagem': typeof AprendizagemRoute
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/admin-conteudos': typeof AdminConteudosRoute
@@ -84,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/questoes': typeof QuestoesRoute
 }
 export interface FileRoutesByTo {
+  '/aprendizagem': typeof AprendizagemRoute
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/admin-conteudos': typeof AdminConteudosRoute
@@ -96,6 +104,7 @@ export interface FileRoutesByTo {
   '/questoes': typeof QuestoesRoute
 }
 export interface FileRoutesById {
+  '/aprendizagem': typeof AprendizagemRoute
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/aprendizagem'
     | '/admin'
     | '/admin-conteudos'
     | '/biblioteca-concursos'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AprendizagemRoute: typeof AprendizagemRoute
   AdminRoute: typeof AdminRoute
   AdminConteudosRoute: typeof AdminConteudosRoute
   BibliotecaConcursosRoute: typeof BibliotecaConcursosRoute
@@ -236,6 +247,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  AprendizagemRoute: AprendizagemRoute,
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AdminConteudosRoute: AdminConteudosRoute,
