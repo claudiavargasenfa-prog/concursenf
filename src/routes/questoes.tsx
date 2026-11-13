@@ -8,7 +8,23 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CmsSections } from "@/components/site/CmsSections";
 import { supabase } from "@/integrations/supabase/client";
-import { PRACTICE_QUESTIONS, type PracticeQuestion } from "@/lib/practice-questions";
+type PracticeQuestion = {
+  id: string;
+  audience?: "todos" | "enfermeiro" | "tecnico" | "auxiliar";
+  discipline: string;
+  topic: string;
+  difficulty: "Básica" | "Intermediária" | "Avançada";
+  statement: string;
+  options: { id: string; text: string }[];
+  reference: string | null;
+};
+
+type QuestionAnswerResult = {
+  is_correct: boolean;
+  correct_option: string;
+  explanation: string;
+  reference: string | null;
+};
 
 const HISTORY_KEY = "concursenf-question-history-v1";
 
@@ -44,7 +60,9 @@ function QuestionsPage() {
   const [showHistory, setShowHistory] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [finished, setFinished] = useState(false);
-  const [questionBank, setQuestionBank] = useState<PracticeQuestion[]>(PRACTICE_QUESTIONS);
+  const [submitting, setSubmitting] = useState(false);
+  const [answerResult, setAnswerResult] = useState<QuestionAnswerResult | null>(null);
+  const [questionBank, setQuestionBank] = useState<PracticeQuestion[]>([]);
   const [bankNotice, setBankNotice] = useState("");
 
   useEffect(() => {
@@ -67,13 +85,10 @@ function QuestionsPage() {
     async function loadPublishedQuestions() {
       try {
         const { data, error } = await (supabase as any)
-          .from("exam_questions")
-          .select("id,audience,subject,topic,difficulty,statement,options,correct_option,explanation,reference")
-          .eq("exam_slug", "ebserh-hubrasil")
-          .eq("published", true);
+          .rpc("get_published_exam_questions", { p_exam_slug: "ebserh-hubrasil" });
         if (error) throw error;
-        if (!active || !data?.length) return;
-        const remote: PracticeQuestion[] = data.map((item: any) => ({
+        if (!active) return;
+        const remote: PracticeQuestion[] = (data ?? []).map((item: any) => ({
           id: item.id,
           audience: item.audience,
           discipline: item.subject,
@@ -81,11 +96,10 @@ function QuestionsPage() {
           difficulty: item.difficulty,
           statement: item.statement,
           options: item.options,
-          answer: item.correct_option,
-          explanation: item.explanation,
-          reference: item.reference || "Referência não informada.",
+          reference: item.reference,
         }));
-        setQuestionBank([...remote, ...PRACTICE_QUESTIONS]);
+        setQuestionBank(remote);
+        if (!remote.length) setBankNotice("Ainda não há questões publicadas disponíveis para este filtro.");
       } catch {
         if (active) setBankNotice("Banco de questões EBSERH/HU Brasil ainda não está conectado. As questões demonstrativas continuam disponíveis.");
       }
@@ -106,7 +120,7 @@ function QuestionsPage() {
   ), [questionBank, discipline, difficulty, audience]);
 
   const question = session[current];
-  const answered = selected !== null;
+  const answered = answerResult !== null;
   const correctCount = answers.filter((answer) => answer.correct).length;
   const percentage = answers.length ? Math.round((correctCount / answers.length) * 100) : 0;
   const bestScore = history.length ? Math.max(...history.map((attempt) => attempt.percentage)) : 0;
@@ -117,15 +131,41 @@ function QuestionsPage() {
     setSession(shuffled);
     setCurrent(0);
     setSelected(null);
+    setAnswerResult(null);
     setAnswers([]);
     setFinished(false);
     setShowHistory(false);
   }
 
-  function submitAnswer() {
-    if (!question || !selected || answered) return;
-    const isCorrect = selected === question.answer;
-    setAnswers((previous) => [...previous, { questionId: question.id, selected, correct: isCorrect }]);
+  async function submitAnswer() {
+    if (!question || !selected || answered || submitting) return;
+    setSubmitting(true);
+    setBankNotice("");
+    try {
+      const { data, error } = await (supabase as any).rpc("submit_exam_question_answer", {
+        p_question_id: question.id,
+        p_selected_option: selected,
+      });
+      if (error) throw error;
+      const result = Array.isArray(data) ? data[0] : data;
+      if (!result) throw new Error("Não foi possível corrigir esta questão.");
+      const normalized: QuestionAnswerResult = {
+        is_correct: Boolean(result.is_correct),
+        correct_option: String(result.correct_option),
+        explanation: String(result.explanation),
+        reference: result.reference ?? null,
+      };
+      setAnswerResult(normalized);
+      setAnswers((previous) => [...previous, {
+        questionId: question.id,
+        selected,
+        correct: normalized.is_correct,
+      }]);
+    } catch {
+      setBankNotice("Não foi possível corrigir a questão agora. Tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function nextQuestion() {
@@ -133,6 +173,7 @@ function QuestionsPage() {
     if (current + 1 < session.length) {
       setCurrent((value) => value + 1);
       setSelected(null);
+      setAnswerResult(null);
       return;
     }
     const finalAnswers = answers;
@@ -154,6 +195,7 @@ function QuestionsPage() {
     setSession([]);
     setCurrent(0);
     setSelected(null);
+    setAnswerResult(null);
     setAnswers([]);
     setFinished(false);
   }
@@ -203,7 +245,7 @@ function QuestionsPage() {
                 <div className="mt-6 space-y-3">
                   {question.options.map((option) => {
                     const isSelected = selected === option.id;
-                    const isAnswer = option.id === question.answer;
+                    const isAnswer = option.id === answerResult?.correct_option;
                     const showResult = answered;
                     const style = showResult && isAnswer
                       ? "border-emerald-500 bg-emerald-500/10 text-foreground"
@@ -221,10 +263,10 @@ function QuestionsPage() {
                     </button>;
                   })}
                 </div>
-                {!answered ? <button type="button" disabled={!selected} onClick={submitAnswer} className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-extrabold text-primary-foreground transition hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-40">Confirmar resposta <ArrowRight className="size-4" /></button> : <div className="mt-6 rounded-2xl border border-border bg-surface-soft p-5 text-surface-soft-foreground">
-                  <div className="flex items-center gap-2">{selected === question.answer ? <CheckCircle2 className="size-5 text-emerald-600" /> : <XCircle className="size-5 text-destructive" />}<h3 className="font-extrabold">{selected === question.answer ? "Resposta correta!" : `Resposta incorreta. Gabarito: ${question.answer}`}</h3></div>
-                  <p className="mt-3 text-sm leading-7 text-soft-muted">{question.explanation}</p>
-                  <p className="mt-3 border-t border-border pt-3 text-xs leading-5 text-soft-muted"><strong>Referência para revisão:</strong> {question.reference}</p>
+                {!answered ? <button type="button" disabled={!selected || submitting} onClick={submitAnswer} className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-extrabold text-primary-foreground transition hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-40">{submitting ? "Corrigindo..." : "Confirmar resposta"} <ArrowRight className="size-4" /></button> : <div className="mt-6 rounded-2xl border border-border bg-surface-soft p-5 text-surface-soft-foreground">
+                  <div className="flex items-center gap-2">{answerResult?.is_correct ? <CheckCircle2 className="size-5 text-emerald-600" /> : <XCircle className="size-5 text-destructive" />}<h3 className="font-extrabold">{answerResult?.is_correct ? "Resposta correta!" : `Resposta incorreta. Gabarito: ${answerResult?.correct_option}`}</h3></div>
+                  <p className="mt-3 text-sm leading-7 text-soft-muted">{answerResult?.explanation}</p>
+                  <p className="mt-3 border-t border-border pt-3 text-xs leading-5 text-soft-muted"><strong>Referência para revisão:</strong> {answerResult?.reference || "Referência não informada."}</p>
                   <button type="button" onClick={nextQuestion} className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-extrabold text-primary-foreground">{current + 1 === session.length ? "Ver meu resultado" : "Próxima questão"} <ArrowRight className="size-4" /></button>
                 </div>}
               </div>}
