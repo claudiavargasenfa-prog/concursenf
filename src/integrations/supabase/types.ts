@@ -14,6 +14,171 @@ export type Database = {
   }
   public: {
     Tables: {
+      exam_content_items: {
+        Row: {
+          audience: string
+          body: string | null
+          content_type: string
+          created_at: string
+          created_by: string | null
+          exam_slug: string
+          id: string
+          published: boolean
+          resource_url: string | null
+          sort_order: number
+          source_reference: string | null
+          storage_path: string | null
+          subject: string
+          summary: string | null
+          title: string
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          body?: string | null
+          content_type: string
+          created_at?: string
+          created_by?: string | null
+          exam_slug?: string
+          id?: string
+          published?: boolean
+          resource_url?: string | null
+          sort_order?: number
+          source_reference?: string | null
+          storage_path?: string | null
+          subject: string
+          summary?: string | null
+          title: string
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          body?: string | null
+          content_type?: string
+          created_at?: string
+          created_by?: string | null
+          exam_slug?: string
+          id?: string
+          published?: boolean
+          resource_url?: string | null
+          sort_order?: number
+          source_reference?: string | null
+          storage_path?: string | null
+          subject?: string
+          summary?: string | null
+          title?: string
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      exam_flashcards: {
+        Row: {
+          audience: string
+          back: string
+          created_at: string
+          created_by: string | null
+          exam_slug: string
+          front: string
+          id: string
+          published: boolean
+          source_reference: string | null
+          subject: string
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          back: string
+          created_at?: string
+          created_by?: string | null
+          exam_slug?: string
+          front: string
+          id?: string
+          published?: boolean
+          source_reference?: string | null
+          subject: string
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          back?: string
+          created_at?: string
+          created_by?: string | null
+          exam_slug?: string
+          front?: string
+          id?: string
+          published?: boolean
+          source_reference?: string | null
+          subject?: string
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      exam_questions: {
+        Row: {
+          audience: string
+          correct_option: string
+          created_at: string
+          created_by: string | null
+          difficulty: string
+          exam_slug: string
+          explanation: string
+          id: string
+          options: Json
+          published: boolean
+          reference: string | null
+          source_board: string | null
+          source_year: number | null
+          statement: string
+          subject: string
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          correct_option: string
+          created_at?: string
+          created_by?: string | null
+          difficulty?: string
+          exam_slug?: string
+          explanation: string
+          id?: string
+          options: Json
+          published?: boolean
+          reference?: string | null
+          source_board?: string | null
+          source_year?: number | null
+          statement: string
+          subject: string
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          correct_option?: string
+          created_at?: string
+          created_by?: string | null
+          difficulty?: string
+          exam_slug?: string
+          explanation?: string
+          id?: string
+          options?: Json
+          published?: boolean
+          reference?: string | null
+          source_board?: string | null
+          source_year?: number | null
+          statement?: string
+          subject?: string
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       material_areas: {
         Row: {
           active: boolean
