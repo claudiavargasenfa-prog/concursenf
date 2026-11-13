@@ -49,3 +49,41 @@ A migration precisa ser aplicada em ambiente Supabase antes de validar consultas
 - Não foram simuladas duas contas para comprovar isolamento entre alunos.
 - A migration de backfill associa registros somente por correspondência exata de exam_slug, subject e topic; vínculos sem correspondência permanecem nulos. Ainda falta relatório executável de registros sem classificação no banco.
 
+
+## Missão P0.3 — integração de jornada do aluno (13/11/2026)
+
+### Verificação da P0.2
+- Os quatro commits da P0.2 estão presentes na branch main.
+- GitHub Actions dos commits e2a4416, da6b95e, 55cacfa e 361ae78 concluíram com sucesso.
+- Isso comprova as verificações configuradas no workflow, não valida a migration no Supabase nem substitui testes E2E.
+
+### Entrega de interface
+- Criada a rota /aprendizagem, reutilizando catalog.service.ts, activity.service.ts e review.service.ts.
+- O painel exige autenticação e consulta sessões, flashcard_reviews e revisões do usuário autenticado.
+- Conteúdos publicados podem ser acessados, abertos no painel e marcados como concluídos em ações distintas. Cada ação gera study_sessions com metadados explícitos; conclusão é autodeclarada e não significa domínio.
+- Flashcards publicados podem ser selecionados, ter resposta revelada e receber uma das quatro avaliações de lembrança. A avaliação só aparece no histórico após persistência confirmada.
+- Indicadores mostram acessos a conteúdos, conteúdos marcados concluídos, sessões de questões registradas no núcleo, aproveitamento calculado a partir das sessões com metadado isCorrect, flashcards avaliados e revisões pendentes.
+- O cabeçalho inclui acesso à nova área do aluno.
+
+### Definições dos indicadores
+- Conteúdos acessados: quantidade de IDs distintos de conteúdo com sessão activity_type=content.
+- Conteúdos concluídos: quantidade de IDs distintos com sessão content e completed=true; representa declaração do aluno, não domínio.
+- Questões registradas: quantidade de sessões activity_type=question recuperadas no histórico limitado a 200 eventos.
+- Aproveitamento: acertos divididos por sessões de questão com resultado isCorrect=true, considerando o conjunto de sessões retornado; não representa domínio global e pode ser nulo sem dados.
+- Flashcards revisados: quantidade de avaliações recuperadas no histórico limitado a 200.
+- Revisões pendentes: agendas vencidas e não concluídas retornadas pelo serviço existente; não inclui revisões futuras nem gera intervalos automáticos.
+
+### Limitações e segurança
+- A rota depende da existência das tabelas e migrations P0/P0.2 no Supabase. Como elas não foram aplicadas/confirmadas no ambiente remoto, a operação real ainda não pode ser certificada.
+- Não foi criado algoritmo de repetição espaçada nem intervalo automático.
+- A avaliação do flashcard é persistida em flashcard_reviews; a agenda de revisão só é exibida quando existe registro em review_schedules.
+- O fluxo de questões permanece na rota /questoes e grava sessões quando a RPC corrige a resposta e a questão possui IDs curriculares.
+- O plano de estudos legado ainda não sincroniza a conclusão de tarefas com study_sessions; permanece pendente.
+- Simulados continuam sem fluxo completo de resposta/correção/conclusão.
+- Não foi possível executar jornada E2E autenticada, validar persistência após novo login ou isolamento de duas contas sem staging e credenciais de teste autorizadas.
+- Nenhum registro foi criado em contas reais. Nenhuma migration foi aplicada remotamente.
+
+### Próximas validações
+- Executar GitHub Actions para a rota /aprendizagem e corrigir falhas de build/TypeScript/lint.
+- Em staging isolado, criar usuário e conteúdo/questões/flashcards de teste e executar jornada completa; verificar os mesmos IDs em study_sessions, exam_question_attempts, flashcard_reviews e dashboard após novo login.
+- Executar teste de autorização com dois usuários e confirmar que RLS impede leitura cruzada.
