@@ -4,6 +4,7 @@ import { ArrowLeft, BookOpenCheck, CalendarDays, CheckCircle2, Circle, Clock3, R
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CmsSections } from "@/components/site/CmsSections";
+import { supabase } from "@/integrations/supabase/client";
 import { CONTENT_GROUPS } from "@/lib/lp-content";
 
 const STORAGE_KEY = "concursenf-study-plan-v1";
@@ -36,6 +37,7 @@ function StudyPlanPage() {
   const [tasks, setTasks] = useState<StudyTask[]>([]);
   const [completed, setCompleted] = useState<string[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const subjects = useMemo(
     () => CONTENT_GROUPS.flatMap((group) => group.items.map((item) => ({
@@ -47,35 +49,79 @@ function StudyPlanPage() {
   );
 
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved) as {
-          selectedSubjects?: string[];
-          selectedDays?: string[];
-          minutesPerDay?: number;
-          tasks?: StudyTask[];
-          completed?: string[];
-        };
-        setSelectedSubjects(parsed.selectedSubjects ?? []);
-        setSelectedDays(parsed.selectedDays ?? ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"]);
-        setMinutesPerDay(parsed.minutesPerDay ?? 60);
-        setTasks(parsed.tasks ?? []);
-        setCompleted(parsed.completed ?? []);
+    let active = true;
+    async function loadPlan() {
+      let localPlan: {
+        selectedSubjects?: string[];
+        selectedDays?: string[];
+        minutesPerDay?: number;
+        tasks?: StudyTask[];
+        completed?: string[];
+      } = {};
+      try {
+        const saved = window.localStorage.getItem(STORAGE_KEY);
+        if (saved) localPlan = JSON.parse(saved);
+      } catch {
+        window.localStorage.removeItem(STORAGE_KEY);
       }
-    } catch {
-      window.localStorage.removeItem(STORAGE_KEY);
-    } finally {
-      setHydrated(true);
+
+      try {
+        const { data: authData } = await supabase.auth.getUser();
+        const user = authData.user;
+        if (!active) return;
+        setUserId(user?.id ?? null);
+        let restored = localPlan;
+        if (user) {
+          const { data, error } = await (supabase as any)
+            .from("exam_study_plans")
+            .select("plan")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          if (error) throw error;
+          if (!active) return;
+          if (data?.plan) restored = data.plan;
+          else if (Object.keys(localPlan).length) {
+            await (supabase as any).from("exam_study_plans").upsert({
+              user_id: user.id,
+              plan: localPlan,
+              updated_at: new Date().toISOString(),
+            });
+          }
+        }
+        if (!active) return;
+        setSelectedSubjects(restored.selectedSubjects ?? []);
+        setSelectedDays(restored.selectedDays ?? ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"]);
+        setMinutesPerDay(restored.minutesPerDay ?? 60);
+        setTasks(restored.tasks ?? []);
+        setCompleted(restored.completed ?? []);
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(restored));
+      } catch {
+        if (!active) return;
+        setSelectedSubjects(localPlan.selectedSubjects ?? []);
+        setSelectedDays(localPlan.selectedDays ?? ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"]);
+        setMinutesPerDay(localPlan.minutesPerDay ?? 60);
+        setTasks(localPlan.tasks ?? []);
+        setCompleted(localPlan.completed ?? []);
+      } finally {
+        if (active) setHydrated(true);
+      }
     }
+    void loadPlan();
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      selectedSubjects, selectedDays, minutesPerDay, tasks, completed,
-    }));
-  }, [hydrated, selectedSubjects, selectedDays, minutesPerDay, tasks, completed]);
+    const plan = { selectedSubjects, selectedDays, minutesPerDay, tasks, completed };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(plan));
+    if (userId) {
+      void (supabase as any).from("exam_study_plans").upsert({
+        user_id: userId,
+        plan,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  }, [hydrated, userId, selectedSubjects, selectedDays, minutesPerDay, tasks, completed]);
 
   const totalTopics = selectedSubjects.reduce((total, subjectName) => {
     const subject = subjects.find((item) => item.id === subjectName);
@@ -189,7 +235,7 @@ function StudyPlanPage() {
                   </div>
                   <button type="button" onClick={clearPlan} className="mt-7 inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-destructive"><RotateCcw className="size-3.5" /> Limpar plano atual</button>
                 </> : <div className="mt-8 rounded-2xl border border-dashed border-border px-6 py-12 text-center"><CalendarDays className="mx-auto size-10 text-muted-foreground" /><h3 className="mt-4 font-extrabold">Seu plano aparecerá aqui</h3><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">Selecione suas disciplinas e os dias disponíveis. Depois, gere o planejamento para visualizar os tópicos distribuídos na semana.</p></div>}
-                <p className="mt-6 border-t border-border pt-4 text-[11px] leading-5 text-muted-foreground">O plano é uma sugestão de organização, não substitui a leitura do edital. Os dados ficam salvos apenas no armazenamento local deste navegador e dispositivo.</p>
+                <p className="mt-6 border-t border-border pt-4 text-[11px] leading-5 text-muted-foreground">O plano é uma sugestão de organização, não substitui a leitura do edital. Os dados ficam no navegador e são sincronizados com sua conta quando você está autenticado.</p>
               </div>
             </section>
           </div>
