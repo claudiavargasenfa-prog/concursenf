@@ -8,6 +8,13 @@
       "when": 1794574935514,
       "tag": "0000_restrict_materiais_files_to_signed_in",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794575074788,
+      "tag": "0001_restrict_material_organizations_reads",
+      "breakpoints": true
     }
   ]
 }
