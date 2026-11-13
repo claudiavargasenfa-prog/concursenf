@@ -73,7 +73,7 @@ function LearningPage() {
   const contentSessions = useMemo(() => sessions.filter((s) => s.activity_type === "content"), [sessions]);
   const questionSessions = useMemo(() => sessions.filter((s) => s.activity_type === "question"), [sessions]);
   const questionAttempts = useMemo(() => questionSessions.length, [questionSessions]);
-  const correctCount = useMemo(() => questionSessions.filter((s) => s.metadata?.isCorrect === true).length, [questionSessions]);
+  const correctCount = useMemo(() => questionSessions.filter((s) => s.metadata?.["isCorrect"] === true).length, [questionSessions]);
   const accuracy = questionAttempts ? Math.round(correctCount / questionAttempts * 100) : null;
   const studiedContents = new Set(contentSessions.map((s) => s.source_id).filter(Boolean)).size;
   const completedContents = new Set(contentSessions.filter((s) => s.completed).map((s) => s.source_id).filter(Boolean)).size;
