@@ -12,6 +12,9 @@ Conteúdos, questões e flashcards mantêm os campos textuais legados e recebem 
 - `catalog.service.ts`: catálogo curricular e consulta de conteúdos publicados.
 - `activity.service.ts`: registro de sessões de estudo e revisões de flashcards.
 - `progress.service.ts`: leitura e atualização do progresso por assunto.
+- `review.service.ts`: agenda, consulta e conclusão de revisões.
+- `simulation.service.ts`: consulta de simulados publicados e início de tentativas.
+- `learning.service.ts`: composição do ambiente de aprendizagem do aluno.
 
 Os serviços são a fronteira entre os componentes e a persistência. A interface existente pode ser migrada módulo a módulo, sem reescrita total.
 
