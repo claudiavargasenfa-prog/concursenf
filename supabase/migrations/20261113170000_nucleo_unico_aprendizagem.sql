@@ -46,7 +46,7 @@ ALTER TABLE public.exam_flashcards
 -- dos valores já existentes nos três módulos.
 INSERT INTO public.learning_subjects (exam_slug, name, slug)
 SELECT DISTINCT source.exam_slug, source.subject,
-       trim(both '-' from regexp_replace(lower(unaccent(source.subject)), '[^a-z0-9]+', '-', 'g'))
+       trim(both '-' from regexp_replace(lower(source.subject), '[^a-z0-9]+', '-', 'g')) || '-' || substr(md5(source.subject), 1, 6)
 FROM (
   SELECT exam_slug, subject FROM public.exam_content_items
   UNION
@@ -58,19 +58,9 @@ WHERE nullif(trim(source.subject), '') IS NOT NULL
 ON CONFLICT (exam_slug, name) DO NOTHING;
 
 -- Normaliza colisões de slug mantendo o nome original como chave única.
-WITH ranked AS (
-  SELECT id, exam_slug, slug,
-         row_number() OVER (PARTITION BY exam_slug, slug ORDER BY name, id) AS position
-  FROM public.learning_subjects
-)
-UPDATE public.learning_subjects AS target
-SET slug = target.slug || '-' || substr(target.id::text, 1, 8)
-FROM ranked
-WHERE target.id = ranked.id AND ranked.position > 1;
-
 INSERT INTO public.learning_topics (subject_id, name, slug)
 SELECT DISTINCT s.id, source.topic,
-       trim(both '-' from regexp_replace(lower(unaccent(source.topic)), '[^a-z0-9]+', '-', 'g'))
+       trim(both '-' from regexp_replace(lower(source.topic), '[^a-z0-9]+', '-', 'g')) || '-' || substr(md5(source.topic), 1, 6)
 FROM (
   SELECT exam_slug, subject, topic FROM public.exam_content_items
   UNION
@@ -82,16 +72,6 @@ JOIN public.learning_subjects AS s
   ON s.exam_slug = source.exam_slug AND s.name = source.subject
 WHERE nullif(trim(source.topic), '') IS NOT NULL
 ON CONFLICT (subject_id, name) DO NOTHING;
-
-WITH ranked AS (
-  SELECT id, subject_id, slug,
-         row_number() OVER (PARTITION BY subject_id, slug ORDER BY name, id) AS position
-  FROM public.learning_topics
-)
-UPDATE public.learning_topics AS target
-SET slug = target.slug || '-' || substr(target.id::text, 1, 8)
-FROM ranked
-WHERE target.id = ranked.id AND ranked.position > 1;
 
 UPDATE public.exam_content_items AS item
 SET subject_id = subject.id, topic_id = topic.id
@@ -143,6 +123,8 @@ CREATE TABLE IF NOT EXISTS public.learning_progress (
   last_studied_at timestamptz,
   updated_at timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT learning_progress_user_topic_unique UNIQUE (user_id, topic_id),
+  CONSTRAINT learning_progress_topic_subject_fk FOREIGN KEY (subject_id, topic_id)
+    REFERENCES public.learning_topics(subject_id, id) ON DELETE CASCADE,
   CONSTRAINT learning_progress_correct_lte_answered CHECK (correct_answers <= questions_answered)
 );
 ALTER TABLE public.learning_progress ENABLE ROW LEVEL SECURITY;
@@ -162,7 +144,9 @@ CREATE TABLE IF NOT EXISTS public.study_sessions (
   completed boolean NOT NULL DEFAULT false,
   metadata jsonb NOT NULL DEFAULT '{}'::jsonb CHECK (jsonb_typeof(metadata) = 'object'),
   started_at timestamptz NOT NULL DEFAULT now(),
-  completed_at timestamptz
+  completed_at timestamptz,
+  CONSTRAINT study_sessions_topic_subject_fk FOREIGN KEY (subject_id, topic_id)
+    REFERENCES public.learning_topics(subject_id, id) ON DELETE SET NULL
 );
 CREATE INDEX IF NOT EXISTS study_sessions_user_date_idx
   ON public.study_sessions(user_id, started_at DESC);
@@ -199,7 +183,9 @@ CREATE TABLE IF NOT EXISTS public.review_schedules (
   due_at timestamptz NOT NULL,
   completed_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT review_schedules_user_topic_source_unique UNIQUE (user_id, topic_id, source_type, source_id)
+  CONSTRAINT review_schedules_user_topic_source_unique UNIQUE (user_id, topic_id, source_type, source_id),
+  CONSTRAINT review_schedules_topic_subject_fk FOREIGN KEY (subject_id, topic_id)
+    REFERENCES public.learning_topics(subject_id, id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS review_schedules_user_due_idx
   ON public.review_schedules(user_id, due_at) WHERE completed_at IS NULL;
@@ -235,11 +221,20 @@ CREATE TABLE IF NOT EXISTS public.exam_simulations (
   audience text NOT NULL DEFAULT 'todos'
     CHECK (audience IN ('todos','enfermeiro','tecnico','auxiliar')),
   duration_minutes integer CHECK (duration_minutes IS NULL OR duration_minutes > 0),
-  question_ids uuid[] NOT NULL DEFAULT '{}',
   published boolean NOT NULL DEFAULT false,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
+CREATE TABLE IF NOT EXISTS public.exam_simulation_questions (
+  simulation_id uuid NOT NULL REFERENCES public.exam_simulations(id) ON DELETE CASCADE,
+  question_id uuid NOT NULL REFERENCES public.exam_questions(id) ON DELETE RESTRICT,
+  position integer NOT NULL DEFAULT 0 CHECK (position >= 0),
+  PRIMARY KEY (simulation_id, question_id),
+  CONSTRAINT simulation_question_position_unique UNIQUE (simulation_id, position)
+);
+CREATE INDEX IF NOT EXISTS simulation_questions_question_idx
+  ON public.exam_simulation_questions(question_id);
+
 CREATE TABLE IF NOT EXISTS public.exam_simulation_attempts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   simulation_id uuid NOT NULL REFERENCES public.exam_simulations(id) ON DELETE CASCADE,
@@ -255,6 +250,7 @@ CREATE INDEX IF NOT EXISTS simulation_attempts_user_date_idx
   ON public.exam_simulation_attempts(user_id, started_at DESC);
 
 ALTER TABLE public.exam_simulations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.exam_simulation_questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.exam_simulation_attempts ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public reads published simulations" ON public.exam_simulations;
 CREATE POLICY "Public reads published simulations"
@@ -262,6 +258,17 @@ ON public.exam_simulations FOR SELECT TO anon, authenticated USING (published = 
 DROP POLICY IF EXISTS "Admins manage simulations" ON public.exam_simulations;
 CREATE POLICY "Admins manage simulations"
 ON public.exam_simulations FOR ALL TO authenticated
+USING (public.is_catalog_admin()) WITH CHECK (public.is_catalog_admin());
+DROP POLICY IF EXISTS "Public reads questions in published simulations" ON public.exam_simulation_questions;
+CREATE POLICY "Public reads questions in published simulations"
+ON public.exam_simulation_questions FOR SELECT TO anon, authenticated
+USING (EXISTS (
+  SELECT 1 FROM public.exam_simulations s
+  WHERE s.id = simulation_id AND s.published = true
+));
+DROP POLICY IF EXISTS "Admins manage simulation questions" ON public.exam_simulation_questions;
+CREATE POLICY "Admins manage simulation questions"
+ON public.exam_simulation_questions FOR ALL TO authenticated
 USING (public.is_catalog_admin()) WITH CHECK (public.is_catalog_admin());
 DROP POLICY IF EXISTS "Users manage own simulation attempts" ON public.exam_simulation_attempts;
 CREATE POLICY "Users manage own simulation attempts"
@@ -304,6 +311,10 @@ AS $function$
 DECLARE
   v_user_id uuid := auth.uid();
   v_saved_option text;
+  v_subject_id uuid;
+  v_topic_id uuid;
+  v_is_correct boolean;
+  v_inserted integer;
 BEGIN
   IF v_user_id IS NULL OR p_selected_option IS NULL THEN
     RETURN;
@@ -320,14 +331,38 @@ BEGIN
     RETURN;
   END IF;
 
+  SELECT q.subject_id, q.topic_id, (q.correct_option = btrim(p_selected_option))
+  INTO v_subject_id, v_topic_id, v_is_correct
+  FROM public.exam_questions q
+  WHERE q.id = p_question_id AND q.published = true;
+
   INSERT INTO public.exam_question_attempts(
     user_id, question_id, selected_option, subject_id, topic_id, is_correct
   )
-  SELECT v_user_id, q.id, btrim(p_selected_option), q.subject_id, q.topic_id,
-         (q.correct_option = btrim(p_selected_option))
-  FROM public.exam_questions q
-  WHERE q.id = p_question_id AND q.published = true
+  VALUES (v_user_id, p_question_id, btrim(p_selected_option), v_subject_id, v_topic_id, v_is_correct)
   ON CONFLICT (user_id, question_id) DO NOTHING;
+
+  GET DIAGNOSTICS v_inserted = ROW_COUNT;
+  IF v_inserted = 1 AND v_subject_id IS NOT NULL AND v_topic_id IS NOT NULL THEN
+    INSERT INTO public.learning_progress (
+      user_id, subject_id, topic_id, status, questions_answered, correct_answers, last_studied_at
+    )
+    VALUES (
+      v_user_id, v_subject_id, v_topic_id,
+      CASE WHEN v_is_correct THEN 'in_progress' ELSE 'needs_review' END,
+      1, CASE WHEN v_is_correct THEN 1 ELSE 0 END, now()
+    )
+    ON CONFLICT (user_id, topic_id) DO UPDATE SET
+      questions_answered = public.learning_progress.questions_answered + 1,
+      correct_answers = public.learning_progress.correct_answers + CASE WHEN v_is_correct THEN 1 ELSE 0 END,
+      status = CASE
+        WHEN NOT v_is_correct THEN 'needs_review'
+        WHEN public.learning_progress.status = 'not_started' THEN 'in_progress'
+        ELSE public.learning_progress.status
+      END,
+      last_studied_at = now(),
+      updated_at = now();
+  END IF;
 
   SELECT a.selected_option INTO v_saved_option
   FROM public.exam_question_attempts a
