@@ -106,7 +106,10 @@ function QuestionsPage() {
           setHistory(localHistory);
         }
       } catch {
-        if (active) setHistory(localHistory);
+        if (active) {
+          setUserId(null);
+          setHistory(localHistory);
+        }
       } finally {
         if (active) setHydrated(true);
       }
