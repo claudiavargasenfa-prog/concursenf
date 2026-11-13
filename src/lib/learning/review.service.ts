@@ -5,6 +5,7 @@ type ReviewQuery = PromiseLike<ReviewQueryResult> & {
   select(columns: string): ReviewQuery;
   eq(column: string, value: unknown): ReviewQuery;
   lte(column: string, value: unknown): ReviewQuery;
+  is(column: string, value: null | boolean): ReviewQuery;
   order(column: string, options?: { ascending?: boolean }): ReviewQuery;
   insert(values: Record<string, unknown>): ReviewQuery;
   update(values: Record<string, unknown>): ReviewQuery;
@@ -32,7 +33,7 @@ async function requireUser() {
 export async function getMyDueReviews(): Promise<ReviewSchedule[]> {
   const user = await requireUser();
   const { data, error } = await db.from("review_schedules").select("*")
-    .eq("user_id", user.id).eq("completed_at", null)
+    .eq("user_id", user.id).is("completed_at", null)
     .lte("due_at", new Date().toISOString()).order("due_at");
   if (error) throw error;
   return (data ?? []) as ReviewSchedule[];
