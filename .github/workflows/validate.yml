@@ -27,6 +27,8 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Build production application
         run: bun run build
+      - name: Check TypeScript types
+        run: bunx tsc --noEmit
       - name: Check formatting and lint changed application files
         run: |
           bunx prettier --write src/lib/learning/types.ts src/lib/learning/catalog.service.ts src/lib/learning/activity.service.ts src/lib/learning/progress.service.ts src/lib/learning/review.service.ts src/lib/learning/simulation.service.ts src/lib/learning/learning.service.ts src/integrations/supabase/types.ts src/routes/index.tsx src/routes/concurso.tsx src/routes/__root.tsx src/components/site/Header.tsx src/components/lp/Hero.tsx src/components/lp/Proof.tsx src/components/lp/Contents.tsx src/components/lp/Offer.tsx src/styles.css
