@@ -4,17 +4,20 @@ import type { LearningCatalog, LearningContent, LearningSubject, LearningTopic, 
 const db = supabase as any;
 
 export async function getLearningCatalog(examSlug = "ebserh-hubrasil"): Promise<LearningCatalog> {
-  const [subjectsResult, topicsResult] = await Promise.all([
-    db.from("learning_subjects").select("id,exam_slug,name,slug,sort_order,active")
-      .eq("exam_slug", examSlug).eq("active", true).order("sort_order").order("name"),
-    db.from("learning_topics").select("id,subject_id,name,slug,description,sort_order,active")
-      .eq("active", true).order("sort_order").order("name"),
-  ]);
-  if (subjectsResult.error) throw subjectsResult.error;
-  if (topicsResult.error) throw topicsResult.error;
+  const { data: subjects, error: subjectsError } = await db.from("learning_subjects")
+    .select("id,exam_slug,name,slug,sort_order,active")
+    .eq("exam_slug", examSlug).eq("active", true).order("sort_order").order("name");
+  if (subjectsError) throw subjectsError;
+  const subjectRows = (subjects ?? []) as LearningSubject[];
+  const subjectIds = subjectRows.map((subject) => subject.id);
+  if (!subjectIds.length) return { subjects: subjectRows, topics: [] };
+  const { data: topics, error: topicsError } = await db.from("learning_topics")
+    .select("id,subject_id,name,slug,description,sort_order,active")
+    .in("subject_id", subjectIds).eq("active", true).order("sort_order").order("name");
+  if (topicsError) throw topicsError;
   return {
-    subjects: (subjectsResult.data ?? []) as LearningSubject[],
-    topics: (topicsResult.data ?? []) as LearningTopic[],
+    subjects: subjectRows,
+    topics: (topics ?? []) as LearningTopic[],
   };
 }
 
