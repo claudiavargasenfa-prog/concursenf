@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794574935514,
+      "tag": "0000_restrict_materiais_files_to_signed_in",
+      "breakpoints": true
+    }
+  ]
 }
