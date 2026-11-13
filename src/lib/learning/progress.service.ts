@@ -1,7 +1,18 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { LearningProgress, LearningStatus } from "./types";
 
-const db = supabase as any;
+type LearningQueryResult = { data: unknown; error: { message: string } | null };
+type LearningQuery = PromiseLike<LearningQueryResult> & {
+  select(columns: string): LearningQuery;
+  eq(column: string, value: unknown): LearningQuery;
+  in(column: string, values: unknown[]): LearningQuery;
+  order(column: string, options?: { ascending?: boolean }): LearningQuery;
+  insert(values: Record<string, unknown>): LearningQuery;
+  upsert(values: Record<string, unknown>, options?: { onConflict?: string }): LearningQuery;
+  single(): Promise<LearningQueryResult>;
+  maybeSingle(): Promise<LearningQueryResult>;
+};
+const db = supabase as unknown as { from(table: string): LearningQuery };
 
 export async function getMyLearningProgress(input: {
   subjectId?: string;
@@ -35,9 +46,10 @@ export async function updateMyTopicProgress(input: {
     throw new Error("O nível de confiança deve estar entre 1 e 5.");
   }
 
-  const { data: current, error: readError } = await db.from("learning_progress")
+  const { data: currentData, error: readError } = await db.from("learning_progress")
     .select("*").eq("user_id", auth.user.id).eq("topic_id", input.topicId).maybeSingle();
   if (readError) throw readError;
+  const current = currentData as Partial<LearningProgress> | null;
   const questionsAnswered = input.questionsAnswered ?? current?.questions_answered ?? 0;
   const correctAnswers = input.correctAnswers ?? current?.correct_answers ?? 0;
   if (correctAnswers > questionsAnswered) throw new Error("O total de acertos não pode superar o total de questões respondidas.");
