@@ -6,6 +6,14 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+
+type LearningTable<Row, Insert> = {
+  Row: Row;
+  Insert: Insert;
+  Update: Partial<Insert>;
+  Relationships: [];
+};
+
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
@@ -14,6 +22,46 @@ export type Database = {
   }
   public: {
     Tables: {
+      learning_subjects: LearningTable<
+        { id: string; exam_slug: string; name: string; slug: string; sort_order: number; active: boolean; created_at: string; updated_at: string },
+        { id?: string; exam_slug: string; name: string; slug: string; sort_order?: number; active?: boolean; created_at?: string; updated_at?: string }
+      >;
+      learning_topics: LearningTable<
+        { id: string; subject_id: string; name: string; slug: string; description: string | null; sort_order: number; active: boolean; created_at: string; updated_at: string },
+        { id?: string; subject_id: string; name: string; slug: string; description?: string | null; sort_order?: number; active?: boolean; created_at?: string; updated_at?: string }
+      >;
+      learning_progress: LearningTable<
+        { id: string; user_id: string; subject_id: string; topic_id: string; status: string; confidence: number | null; questions_answered: number; correct_answers: number; last_studied_at: string | null; updated_at: string },
+        { id?: string; user_id: string; subject_id: string; topic_id: string; status?: string; confidence?: number | null; questions_answered?: number; correct_answers?: number; last_studied_at?: string | null; updated_at?: string }
+      >;
+      study_sessions: LearningTable<
+        { id: string; user_id: string; subject_id: string | null; topic_id: string | null; activity_type: string; source_id: string | null; duration_seconds: number; completed: boolean; metadata: Json; started_at: string; completed_at: string | null },
+        { id?: string; user_id: string; subject_id?: string | null; topic_id?: string | null; activity_type: string; source_id?: string | null; duration_seconds?: number; completed?: boolean; metadata?: Json; started_at?: string; completed_at?: string | null }
+      >;
+      flashcard_reviews: LearningTable<
+        { id: string; user_id: string; flashcard_id: string; rating: number; reviewed_at: string; next_review_at: string | null; response_seconds: number | null },
+        { id?: string; user_id: string; flashcard_id: string; rating: number; reviewed_at?: string; next_review_at?: string | null; response_seconds?: number | null }
+      >;
+      review_schedules: LearningTable<
+        { id: string; user_id: string; subject_id: string; topic_id: string; source_type: string; source_id: string | null; due_at: string; completed_at: string | null; created_at: string },
+        { id?: string; user_id: string; subject_id: string; topic_id: string; source_type: string; source_id?: string | null; due_at: string; completed_at?: string | null; created_at?: string }
+      >;
+      exam_simulations: LearningTable<
+        { id: string; exam_slug: string; title: string; description: string | null; audience: string; duration_minutes: number | null; published: boolean; created_at: string; updated_at: string },
+        { id?: string; exam_slug: string; title: string; description?: string | null; audience?: string; duration_minutes?: number | null; published?: boolean; created_at?: string; updated_at?: string }
+      >;
+      exam_simulation_questions: LearningTable<
+        { simulation_id: string; question_id: string; position: number },
+        { simulation_id: string; question_id: string; position?: number }
+      >;
+      exam_simulation_attempts: LearningTable<
+        { id: string; simulation_id: string; user_id: string; answers: Json; total_questions: number; correct_answers: number; started_at: string; completed_at: string | null },
+        { id?: string; simulation_id: string; user_id: string; answers?: Json; total_questions?: number; correct_answers?: number; started_at?: string; completed_at?: string | null }
+      >;
+      exam_question_attempts: LearningTable<
+        { user_id: string; question_id: string; selected_option: string; subject_id: string | null; topic_id: string | null; is_correct: boolean | null; created_at: string },
+        { user_id: string; question_id: string; selected_option: string; subject_id?: string | null; topic_id?: string | null; is_correct?: boolean | null; created_at?: string }
+      >;
       exam_content_items: {
         Row: {
           audience: string
@@ -28,6 +76,8 @@ export type Database = {
           sort_order: number
           source_reference: string | null
           storage_path: string | null
+          subject_id: string | null
+          topic_id: string | null
           subject: string
           summary: string | null
           title: string
@@ -47,6 +97,8 @@ export type Database = {
           sort_order?: number
           source_reference?: string | null
           storage_path?: string | null
+          subject_id?: string | null
+          topic_id?: string | null
           subject: string
           summary?: string | null
           title: string
@@ -66,6 +118,8 @@ export type Database = {
           sort_order?: number
           source_reference?: string | null
           storage_path?: string | null
+          subject_id?: string | null
+          topic_id?: string | null
           subject?: string
           summary?: string | null
           title?: string
@@ -85,6 +139,8 @@ export type Database = {
           id: string
           published: boolean
           source_reference: string | null
+          subject_id: string | null
+          topic_id: string | null
           subject: string
           topic: string
           updated_at: string
@@ -99,6 +155,8 @@ export type Database = {
           id?: string
           published?: boolean
           source_reference?: string | null
+          subject_id?: string | null
+          topic_id?: string | null
           subject: string
           topic: string
           updated_at?: string
@@ -113,6 +171,8 @@ export type Database = {
           id?: string
           published?: boolean
           source_reference?: string | null
+          subject_id?: string | null
+          topic_id?: string | null
           subject?: string
           topic?: string
           updated_at?: string
@@ -135,6 +195,8 @@ export type Database = {
           source_board: string | null
           source_year: number | null
           statement: string
+          subject_id: string | null
+          topic_id: string | null
           subject: string
           topic: string
           updated_at: string
@@ -154,6 +216,8 @@ export type Database = {
           source_board?: string | null
           source_year?: number | null
           statement: string
+          subject_id?: string | null
+          topic_id?: string | null
           subject: string
           topic: string
           updated_at?: string
@@ -173,6 +237,8 @@ export type Database = {
           source_board?: string | null
           source_year?: number | null
           statement?: string
+          subject_id?: string | null
+          topic_id?: string | null
           subject?: string
           topic?: string
           updated_at?: string
@@ -457,7 +523,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      is_catalog_admin: { Args: never; Returns: boolean }
+      get_published_exam_questions: {
+        Args: { p_exam_slug?: string };
+        Returns: { id: string; audience: string; subject: string; topic: string; difficulty: string; statement: string; options: Json; reference: string | null }[];
+      };
+      is_catalog_admin: { Args: never; Returns: boolean };
+      submit_exam_question_answer: {
+        Args: { p_question_id: string; p_selected_option: string };
+        Returns: { is_correct: boolean; correct_option: string; explanation: string; reference: string | null }[];
+      };
     }
     Enums: {
       [_ in never]: never
