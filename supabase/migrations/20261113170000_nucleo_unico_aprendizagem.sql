@@ -212,6 +212,28 @@ WHERE question.id = attempt.question_id
 CREATE INDEX IF NOT EXISTS exam_question_attempts_user_topic_idx
   ON public.exam_question_attempts(user_id, subject_id, topic_id, created_at DESC);
 
+-- Consolida tentativas anteriores no novo indicador por assunto.
+INSERT INTO public.learning_progress (
+  user_id, subject_id, topic_id, status, questions_answered, correct_answers, last_studied_at
+)
+SELECT
+  attempt.user_id,
+  attempt.subject_id,
+  attempt.topic_id,
+  CASE WHEN bool_and(attempt.is_correct) THEN 'in_progress' ELSE 'needs_review' END,
+  count(*)::integer,
+  count(*) FILTER (WHERE attempt.is_correct)::integer,
+  max(attempt.created_at)
+FROM public.exam_question_attempts attempt
+WHERE attempt.subject_id IS NOT NULL AND attempt.topic_id IS NOT NULL
+GROUP BY attempt.user_id, attempt.subject_id, attempt.topic_id
+ON CONFLICT (user_id, topic_id) DO UPDATE SET
+  questions_answered = EXCLUDED.questions_answered,
+  correct_answers = EXCLUDED.correct_answers,
+  status = EXCLUDED.status,
+  last_studied_at = EXCLUDED.last_studied_at,
+  updated_at = now();
+
 -- Simulados ficam preparados para reutilizar questões e o mesmo catálogo curricular.
 CREATE TABLE IF NOT EXISTS public.exam_simulations (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
