@@ -149,7 +149,7 @@ function QuestionsPage() {
         setQuestionBank(remote);
         if (!remote.length) setBankNotice("Ainda não há questões publicadas disponíveis para este filtro.");
       } catch {
-        if (active) setBankNotice("Banco de questões EBSERH/HU Brasil ainda não está conectado. As questões demonstrativas continuam disponíveis.");
+        if (active) setBankNotice("Não foi possível carregar o banco de questões. Verifique a conexão ou tente novamente mais tarde.");
       }
     }
     void loadPublishedQuestions();
