@@ -42,5 +42,5 @@ AS $function$
   ORDER BY q.subject, q.topic, q.created_at, q.id;
 $function$;
 
-REVOKE ALL ON FUNCTION public.get_published_exam_questions(text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.get_published_exam_questions(text) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.get_published_exam_questions(text) TO authenticated;
