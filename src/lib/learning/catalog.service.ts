@@ -32,6 +32,39 @@ export async function getLearningCatalog(examSlug = "ebserh-hubrasil"): Promise<
   };
 }
 
+
+function makeSlug(value: string): string {
+  const base = value.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "item";
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  return `${base}-${hash.toString(16).slice(0, 6)}`;
+}
+
+export async function ensureLearningTopic(input: {
+  examSlug?: string;
+  subjectName: string;
+  topicName: string;
+}): Promise<{ subjectId: string; topicId: string }> {
+  const examSlug = input.examSlug ?? "ebserh-hubrasil";
+  const subjectName = input.subjectName.trim();
+  const topicName = input.topicName.trim();
+  if (!subjectName || !topicName) throw new Error("Informe a disciplina e o assunto.");
+
+  const { data: subjectData, error: subjectError } = await db.from("learning_subjects")
+    .upsert({ exam_slug: examSlug, name: subjectName, slug: makeSlug(subjectName), active: true }, { onConflict: "exam_slug,name" })
+    .select("id").single();
+  if (subjectError) throw subjectError;
+  const subject = subjectData as { id: string };
+
+  const { data: topicData, error: topicError } = await db.from("learning_topics")
+    .upsert({ subject_id: subject.id, name: topicName, slug: makeSlug(topicName), active: true }, { onConflict: "subject_id,name" })
+    .select("id").single();
+  if (topicError) throw topicError;
+  const topic = topicData as { id: string };
+  return { subjectId: subject.id, topicId: topic.id };
+}
+
 export async function getLearningContents(input: {
   examSlug?: string;
   audience?: ProfessionalRole;
