@@ -10,6 +10,8 @@ import { CmsSections } from "@/components/site/CmsSections";
 import { supabase } from "@/integrations/supabase/client";
 type PracticeQuestion = {
   id: string;
+  subject_id?: string | null;
+  topic_id?: string | null;
   audience?: "todos" | "enfermeiro" | "tecnico" | "auxiliar";
   discipline: string;
   topic: string;
@@ -147,6 +149,8 @@ function QuestionsPage() {
         if (!active) return;
         const remote: PracticeQuestion[] = (data ?? []).map((item: any) => ({
           id: item.id,
+          subject_id: item.subject_id ?? null,
+          topic_id: item.topic_id ?? null,
           audience: item.audience,
           discipline: item.subject,
           topic: item.topic,
