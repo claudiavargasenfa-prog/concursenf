@@ -135,6 +135,12 @@ function QuestionsPage() {
     let active = true;
     async function loadPublishedQuestions() {
       try {
+        const { data: authData, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        if (!authData.user) {
+          if (active) setBankNotice("Entre na sua conta para acessar as questões, registrar suas respostas e acompanhar seu desempenho.");
+          return;
+        }
         const { data, error } = await (supabase as any)
           .rpc("get_published_exam_questions", { p_exam_slug: "ebserh-hubrasil" });
         if (error) throw error;
@@ -220,14 +226,20 @@ function QuestionsPage() {
   }
 
   function nextQuestion() {
-    if (!question || !selected) return;
+    if (!question || !selected || !answerResult) return;
+    const currentAnswer = {
+      questionId: question.id,
+      selected,
+      correct: answerResult.is_correct,
+    };
+    const finalAnswers = [...answers, currentAnswer];
     if (current + 1 < session.length) {
+      setAnswers(finalAnswers);
       setCurrent((value) => value + 1);
       setSelected(null);
       setAnswerResult(null);
       return;
     }
-    const finalAnswers = answers;
     const correct = finalAnswers.filter((answer) => answer.correct).length;
     const result: Attempt = {
       id: `attempt-${Date.now()}`,
