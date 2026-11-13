@@ -59,6 +59,7 @@ function QuestionsPage() {
   const [history, setHistory] = useState<Attempt[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const [finished, setFinished] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [answerResult, setAnswerResult] = useState<QuestionAnswerResult | null>(null);
@@ -66,19 +67,66 @@ function QuestionsPage() {
   const [bankNotice, setBankNotice] = useState("");
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(HISTORY_KEY);
-      if (stored) setHistory(JSON.parse(stored) as Attempt[]);
-    } catch {
-      window.localStorage.removeItem(HISTORY_KEY);
-    } finally {
-      setHydrated(true);
+    let active = true;
+    async function loadHistory() {
+      let localHistory: Attempt[] = [];
+      try {
+        const stored = window.localStorage.getItem(HISTORY_KEY);
+        if (stored) localHistory = JSON.parse(stored) as Attempt[];
+      } catch {
+        window.localStorage.removeItem(HISTORY_KEY);
+      }
+
+      try {
+        const { data: authData } = await supabase.auth.getUser();
+        const user = authData.user;
+        if (!active) return;
+        setUserId(user?.id ?? null);
+
+        if (user) {
+          const { data, error } = await (supabase as any)
+            .from("exam_practice_history")
+            .select("attempts")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          if (error) throw error;
+          if (!active) return;
+          const cloudHistory = Array.isArray(data?.attempts) ? data.attempts as Attempt[] : null;
+          const restored = cloudHistory ?? localHistory;
+          setHistory(restored);
+          window.localStorage.setItem(HISTORY_KEY, JSON.stringify(restored));
+          if (!cloudHistory && localHistory.length) {
+            await (supabase as any).from("exam_practice_history").upsert({
+              user_id: user.id,
+              attempts: localHistory,
+              updated_at: new Date().toISOString(),
+            });
+          }
+        } else {
+          setHistory(localHistory);
+        }
+      } catch {
+        if (active) setHistory(localHistory);
+      } finally {
+        if (active) setHydrated(true);
+      }
     }
+    void loadHistory();
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
-    if (hydrated) window.localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-  }, [history, hydrated]);
+    if (!hydrated) return;
+    const serialized = JSON.stringify(history);
+    window.localStorage.setItem(HISTORY_KEY, serialized);
+    if (userId) {
+      void (supabase as any).from("exam_practice_history").upsert({
+        user_id: userId,
+        attempts: history,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  }, [history, hydrated, userId]);
 
   useEffect(() => {
     let active = true;
