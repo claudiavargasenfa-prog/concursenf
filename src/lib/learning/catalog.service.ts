@@ -1,7 +1,18 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { LearningCatalog, LearningContent, LearningSubject, LearningTopic, ProfessionalRole } from "./types";
 
-const db = supabase as any;
+type LearningQueryResult = { data: unknown; error: { message: string } | null };
+type LearningQuery = PromiseLike<LearningQueryResult> & {
+  select(columns: string): LearningQuery;
+  eq(column: string, value: unknown): LearningQuery;
+  in(column: string, values: unknown[]): LearningQuery;
+  order(column: string, options?: { ascending?: boolean }): LearningQuery;
+  insert(values: Record<string, unknown>): LearningQuery;
+  upsert(values: Record<string, unknown>, options?: { onConflict?: string }): LearningQuery;
+  single(): Promise<LearningQueryResult>;
+  maybeSingle(): Promise<LearningQueryResult>;
+};
+const db = supabase as unknown as { from(table: string): LearningQuery };
 
 export async function getLearningCatalog(examSlug = "ebserh-hubrasil"): Promise<LearningCatalog> {
   const { data: subjects, error: subjectsError } = await db.from("learning_subjects")
