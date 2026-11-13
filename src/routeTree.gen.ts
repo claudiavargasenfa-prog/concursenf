@@ -10,7 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminConteudosRouteImport } from './routes/admin-conteudos'
+import { Route as BibliotecaConcursosRouteImport } from './routes/biblioteca-concursos'
+import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as ConcursoRouteImport } from './routes/concurso'
+import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as MateriaisRouteImport } from './routes/materiais'
 import { Route as PlanoDeEstudosRouteImport } from './routes/plano-de-estudos'
 import { Route as QuestoesRouteImport } from './routes/questoes'
@@ -20,9 +25,34 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminConteudosRoute = AdminConteudosRouteImport.update({
+  id: '/admin-conteudos',
+  path: '/admin-conteudos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BibliotecaConcursosRoute = BibliotecaConcursosRouteImport.update({
+  id: '/biblioteca-concursos',
+  path: '/biblioteca-concursos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroRoute = CadastroRouteImport.update({
+  id: '/cadastro',
+  path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConcursoRoute = ConcursoRouteImport.update({
   id: '/concurso',
   path: '/concurso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MateriaisRoute = MateriaisRouteImport.update({
@@ -43,14 +73,24 @@ const QuestoesRoute = QuestoesRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/admin-conteudos': typeof AdminConteudosRoute
+  '/biblioteca-concursos': typeof BibliotecaConcursosRoute
+  '/cadastro': typeof CadastroRoute
   '/concurso': typeof ConcursoRoute
+  '/entrar': typeof EntrarRoute
   '/materiais': typeof MateriaisRoute
   '/plano-de-estudos': typeof PlanoDeEstudosRoute
   '/questoes': typeof QuestoesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/admin-conteudos': typeof AdminConteudosRoute
+  '/biblioteca-concursos': typeof BibliotecaConcursosRoute
+  '/cadastro': typeof CadastroRoute
   '/concurso': typeof ConcursoRoute
+  '/entrar': typeof EntrarRoute
   '/materiais': typeof MateriaisRoute
   '/plano-de-estudos': typeof PlanoDeEstudosRoute
   '/questoes': typeof QuestoesRoute
@@ -58,7 +98,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/admin-conteudos': typeof AdminConteudosRoute
+  '/biblioteca-concursos': typeof BibliotecaConcursosRoute
+  '/cadastro': typeof CadastroRoute
   '/concurso': typeof ConcursoRoute
+  '/entrar': typeof EntrarRoute
   '/materiais': typeof MateriaisRoute
   '/plano-de-estudos': typeof PlanoDeEstudosRoute
   '/questoes': typeof QuestoesRoute
@@ -66,13 +111,37 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/concurso' | '/materiais' | '/plano-de-estudos' | '/questoes'
+    | '/'
+    | '/admin'
+    | '/admin-conteudos'
+    | '/biblioteca-concursos'
+    | '/cadastro'
+    | '/concurso'
+    | '/entrar'
+    | '/materiais'
+    | '/plano-de-estudos'
+    | '/questoes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/concurso' | '/materiais' | '/plano-de-estudos' | '/questoes'
+  to:
+    | '/'
+    | '/admin'
+    | '/admin-conteudos'
+    | '/biblioteca-concursos'
+    | '/cadastro'
+    | '/concurso'
+    | '/entrar'
+    | '/materiais'
+    | '/plano-de-estudos'
+    | '/questoes'
   id:
     | '__root__'
     | '/'
+    | '/admin'
+    | '/admin-conteudos'
+    | '/biblioteca-concursos'
+    | '/cadastro'
     | '/concurso'
+    | '/entrar'
     | '/materiais'
     | '/plano-de-estudos'
     | '/questoes'
@@ -80,7 +149,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  AdminConteudosRoute: typeof AdminConteudosRoute
+  BibliotecaConcursosRoute: typeof BibliotecaConcursosRoute
+  CadastroRoute: typeof CadastroRoute
   ConcursoRoute: typeof ConcursoRoute
+  EntrarRoute: typeof EntrarRoute
   MateriaisRoute: typeof MateriaisRoute
   PlanoDeEstudosRoute: typeof PlanoDeEstudosRoute
   QuestoesRoute: typeof QuestoesRoute
@@ -95,11 +169,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-conteudos': {
+      id: '/admin-conteudos'
+      path: '/admin-conteudos'
+      fullPath: '/admin-conteudos'
+      preLoaderRoute: typeof AdminConteudosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/biblioteca-concursos': {
+      id: '/biblioteca-concursos'
+      path: '/biblioteca-concursos'
+      fullPath: '/biblioteca-concursos'
+      preLoaderRoute: typeof BibliotecaConcursosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro': {
+      id: '/cadastro'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/concurso': {
       id: '/concurso'
       path: '/concurso'
       fullPath: '/concurso'
       preLoaderRoute: typeof ConcursoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/materiais': {
@@ -128,7 +237,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  AdminConteudosRoute: AdminConteudosRoute,
+  BibliotecaConcursosRoute: BibliotecaConcursosRoute,
+  CadastroRoute: CadastroRoute,
   ConcursoRoute: ConcursoRoute,
+  EntrarRoute: EntrarRoute,
   MateriaisRoute: MateriaisRoute,
   PlanoDeEstudosRoute: PlanoDeEstudosRoute,
   QuestoesRoute: QuestoesRoute,
