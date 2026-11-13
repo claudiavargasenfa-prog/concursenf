@@ -10,4 +10,6 @@
 8. O progresso é consolidado em `learning_progress`.
 9. Revisões futuras podem ser consultadas em `review_schedules`.
 
+O cadastro administrativo cria ou reutiliza a disciplina e o assunto no catálogo central e grava os IDs junto aos conteúdos, questões e flashcards.
+
 Nesta fase os serviços e as tabelas são a fundação de integração. As telas existentes ainda precisam ser conectadas a esses serviços nos próximos incrementos.
