@@ -525,7 +525,7 @@ export type Database = {
     Functions: {
       get_published_exam_questions: {
         Args: { p_exam_slug?: string };
-        Returns: { id: string; audience: string; subject: string; topic: string; difficulty: string; statement: string; options: Json; reference: string | null }[];
+        Returns: { id: string; subject_id: string | null; topic_id: string | null; audience: string; subject: string; topic: string; difficulty: string; statement: string; options: Json; reference: string | null }[];
       };
       is_catalog_admin: { Args: never; Returns: boolean };
       submit_exam_question_answer: {
