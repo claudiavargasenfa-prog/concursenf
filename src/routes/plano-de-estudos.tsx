@@ -97,6 +97,7 @@ function StudyPlanPage() {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(restored));
       } catch {
         if (!active) return;
+        setUserId(null);
         setSelectedSubjects(localPlan.selectedSubjects ?? []);
         setSelectedDays(localPlan.selectedDays ?? ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"]);
         setMinutesPerDay(localPlan.minutesPerDay ?? 60);
