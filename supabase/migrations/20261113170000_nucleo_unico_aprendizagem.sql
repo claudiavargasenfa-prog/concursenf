@@ -293,6 +293,42 @@ CREATE POLICY "Admins manage learning topics"
 ON public.learning_topics FOR ALL TO authenticated
 USING (public.is_catalog_admin()) WITH CHECK (public.is_catalog_admin());
 
+-- A listagem retorna somente questões ainda não respondidas pelo aluno e não expõe gabarito.
+CREATE OR REPLACE FUNCTION public.get_published_exam_questions(
+  p_exam_slug text DEFAULT 'ebserh-hubrasil'
+)
+RETURNS TABLE (
+  id uuid,
+  subject_id uuid,
+  topic_id uuid,
+  audience text,
+  subject text,
+  topic text,
+  difficulty text,
+  statement text,
+  options jsonb,
+  reference text
+)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = pg_catalog, public
+AS $function$
+  SELECT q.id, q.subject_id, q.topic_id, q.audience, q.subject, q.topic,
+         q.difficulty, q.statement, q.options, q.reference
+  FROM public.exam_questions q
+  WHERE q.published = true
+    AND q.exam_slug = p_exam_slug
+    AND auth.uid() IS NOT NULL
+    AND NOT EXISTS (
+      SELECT 1 FROM public.exam_question_attempts a
+      WHERE a.user_id = auth.uid() AND a.question_id = q.id
+    )
+  ORDER BY q.subject, q.topic, q.created_at, q.id;
+$function$;
+REVOKE ALL ON FUNCTION public.get_published_exam_questions(text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.get_published_exam_questions(text) TO authenticated;
+
 -- A RPC mantém a correção no servidor e registra o vínculo curricular.
 CREATE OR REPLACE FUNCTION public.submit_exam_question_answer(
   p_question_id uuid,
