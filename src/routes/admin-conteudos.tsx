@@ -4,6 +4,8 @@ import { ArrowLeft, BookOpen, CheckCircle2, CircleAlert, FilePlus2, Layers3, Lis
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
+import { getLearningCatalog } from "@/lib/learning/catalog.service";
+import type { LearningCatalog } from "@/lib/learning/types";
 
 type Tab = "conteudo" | "questao" | "flashcard";
 type Counts = { content: number; questions: number; flashcards: number };
@@ -25,6 +27,8 @@ function AdminExamContentPage() {
   const [error, setError] = useState("");
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
+  const [learningCatalog, setLearningCatalog] = useState<LearningCatalog>({ subjects: [], topics: [] });
+  const [catalogError, setCatalogError] = useState("");
   const [audience, setAudience] = useState("todos");
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
@@ -67,7 +71,16 @@ function AdminExamContentPage() {
     }
   }
 
-  useEffect(() => { void loadCounts(); }, []);
+  useEffect(() => {
+    void loadCounts();
+    void getLearningCatalog().then(setLearningCatalog).catch(() => {
+      setCatalogError("O catálogo curricular ainda não está disponível. Aplique a migração do núcleo de aprendizagem para cadastrar novos materiais vinculados.");
+    });
+  }, []);
+
+  const selectedSubject = learningCatalog.subjects.find((item) => item.name === subject);
+  const availableTopics = learningCatalog.topics.filter((item) => item.subject_id === selectedSubject?.id);
+  const selectedTopic = availableTopics.find((item) => item.name === topic);
 
   function resetForm() {
     setTitle(""); setSummary(""); setBody(""); setResourceUrl(""); setPdfFile(null); setSource("");
@@ -80,7 +93,13 @@ function AdminExamContentPage() {
     setSaving(true); setError(""); setMessage("");
     try {
       const db = supabase as any;
-      const common = { exam_slug: "ebserh-hubrasil", audience, subject: subject.trim(), topic: topic.trim(), published: published };
+      if (!selectedSubject || !selectedTopic) {
+        throw new Error("Selecione uma disciplina e um assunto cadastrados no catálogo curricular.");
+      }
+      const common = {
+        exam_slug: "ebserh-hubrasil", audience, subject: selectedSubject.name, topic: selectedTopic.name,
+        subject_id: selectedSubject.id, topic_id: selectedTopic.id, published,
+      };
       let result;
       if (tab === "conteudo") {
         if (["audio", "video", "link"].includes(contentType) && !resourceUrl.trim()) throw new Error("Informe o endereço do recurso.");
@@ -160,8 +179,19 @@ function AdminExamContentPage() {
               <label className={labelClass}>Cargo / público
                 <select className={inputClass} value={audience} onChange={(e) => setAudience(e.target.value)}><option value="todos">Todos os cargos</option><option value="enfermeiro">Enfermeiro</option><option value="tecnico">Técnico de Enfermagem</option><option value="auxiliar">Auxiliar de Enfermagem</option></select>
               </label>
-              <label className={labelClass}>Disciplina<input className={inputClass} value={subject} onChange={(e) => setSubject(e.target.value)} required placeholder="Ex.: Enfermagem Médico-Cirúrgica" /></label>
-              <label className={labelClass}>Assunto / tópico<input className={inputClass} value={topic} onChange={(e) => setTopic(e.target.value)} required placeholder="Ex.: Segurança do paciente" /></label>
+              <label className={labelClass}>Disciplina
+                <select className={inputClass} value={subject} onChange={(e) => { setSubject(e.target.value); setTopic(""); }} required>
+                  <option value="">Selecione a disciplina</option>
+                  {learningCatalog.subjects.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}
+                </select>
+              </label>
+              <label className={labelClass}>Assunto / tópico
+                <select className={inputClass} value={topic} onChange={(e) => setTopic(e.target.value)} required disabled={!selectedSubject}>
+                  <option value="">Selecione o assunto</option>
+                  {availableTopics.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}
+                </select>
+              </label>
+              {catalogError && <p className="text-xs text-destructive sm:col-span-2" role="alert">{catalogError}</p>}
             </div>
 
             {tab === "conteudo" && <>
