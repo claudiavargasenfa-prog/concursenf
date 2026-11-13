@@ -11,6 +11,7 @@ import { Footer } from "@/components/site/Footer";
 import { CmsSections } from "@/components/site/CmsSections";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { getMaterialFileUrl } from "@/lib/materials.functions";
 
 type Area = { id: string; name: string; slug: string; description: string | null; icon: string; categories: Category[] };
 type Category = { id: string; area_id: string; name: string; slug: string };
@@ -128,11 +129,8 @@ function MaterialsPage() {
     if (!document.storage_path) return;
     setDocumentBusy(document.id);
     try {
-      const db = supabase as any;
-      const { data, error } = await db.storage.from("concursenf-materiais").createSignedUrl(document.storage_path, 120);
-      if (error) throw error;
-      if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener,noreferrer");
-      else throw new Error("Não foi possível gerar o acesso temporário ao documento.");
+      const { url } = await getMaterialFileUrl({ data: { kind: "document", id: document.id } });
+      window.open(url, "_blank", "noopener,noreferrer");
     } catch (error) {
       console.error("[Central de Materiais] Falha ao abrir documento:", error);
       window.alert("Não foi possível abrir este documento. Tente novamente em instantes.");

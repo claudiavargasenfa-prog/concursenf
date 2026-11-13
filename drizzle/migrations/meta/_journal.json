@@ -15,6 +15,13 @@
       "when": 1794575074788,
       "tag": "0001_restrict_material_organizations_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794576231094,
+      "tag": "0002_materiais_files_admin_only_reads",
+      "breakpoints": true
     }
   ]
 }

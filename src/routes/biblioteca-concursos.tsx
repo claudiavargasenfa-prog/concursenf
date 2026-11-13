@@ -5,6 +5,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CmsSections } from "@/components/site/CmsSections";
 import { supabase } from "@/integrations/supabase/client";
+import { getMaterialFileUrl } from "@/lib/materials.functions";
 
 type ContentItem = { id: string; audience: string; subject: string; topic: string; content_type: string; title: string; summary: string | null; body: string | null; resource_url: string | null; storage_path: string | null; source_reference: string | null };
 type Flashcard = { id: string; audience: string; subject: string; topic: string; front: string; back: string; source_reference: string | null };
@@ -39,9 +40,10 @@ function ExamLibraryPage() {
         const rawItems = (contentResult.data ?? []) as ContentItem[];
         const signedItems = await Promise.all(rawItems.map(async (item) => {
           if (!item.storage_path) return item;
-          const { data, error } = await db.storage.from("concursenf-materiais").createSignedUrl(item.storage_path, 3600);
-          if (error || !data?.signedUrl) return item;
-          return { ...item, resource_url: data.signedUrl };
+          try {
+            const { url } = await getMaterialFileUrl({ data: { kind: "content", id: item.id } });
+            return { ...item, resource_url: url };
+          } catch { return item; }
         }));
         setItems(signedItems);
         setCards((cardResult.data ?? []) as Flashcard[]);
