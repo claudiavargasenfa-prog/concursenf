@@ -92,6 +92,7 @@ A ordem precisa ser comparada com o histórico efetivo do banco antes de qualque
 - O fluxo de questões permanece na rota /questoes. A RPC de correção grava a tentativa e a sessão de estudo na mesma transação, inclusive quando a questão ainda não possui IDs curriculares; o navegador não faz uma segunda gravação best-effort.
 - O plano de estudos legado ainda não sincroniza a conclusão de tarefas com study_sessions; permanece pendente.
 - O histórico local de questões não é mais importado automaticamente para uma conta autenticada, evitando misturar dados de pessoas diferentes que utilizem o mesmo navegador.
+- As tentativas de simulados permitem leitura e início pelo próprio aluno, mas não atualização direta de respostas ou pontuação; a futura correção deverá ocorrer por RPC segura.
 - Simulados continuam sem fluxo completo de resposta/correção/conclusão.
 - Não foi possível executar jornada E2E autenticada, validar persistência após novo login ou isolamento de duas contas sem staging e credenciais de teste autorizadas.
 - Nenhum registro foi criado em contas reais. Nenhuma migration foi aplicada remotamente.
