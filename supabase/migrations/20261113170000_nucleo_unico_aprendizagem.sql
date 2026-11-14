@@ -401,6 +401,20 @@ BEGIN
   ON CONFLICT (user_id, question_id) DO NOTHING;
 
   GET DIAGNOSTICS v_inserted = ROW_COUNT;
+
+  -- A resposta e sua sessão de estudo são persistidas na mesma transação.
+  -- Isso evita que uma falha secundária no navegador deixe o dashboard inconsistente.
+  IF v_inserted = 1 THEN
+    INSERT INTO public.study_sessions (
+      user_id, subject_id, topic_id, activity_type, source_id,
+      completed, metadata, completed_at
+    )
+    VALUES (
+      v_user_id, v_subject_id, v_topic_id, 'question', p_question_id,
+      true, jsonb_build_object('isCorrect', v_is_correct), now()
+    );
+  END IF;
+
   IF v_inserted = 1 AND v_subject_id IS NOT NULL AND v_topic_id IS NOT NULL THEN
     INSERT INTO public.learning_progress (
       user_id, subject_id, topic_id, status, questions_answered, correct_answers, last_studied_at
