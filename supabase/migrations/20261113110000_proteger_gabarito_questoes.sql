@@ -30,11 +30,15 @@ AS $function$
     q.topic,
     q.difficulty,
     q.statement,
-    q.options,
+    COALESCE((SELECT jsonb_agg(jsonb_build_object('id', option_item.value ->> 'id', 'text', option_item.value ->> 'text') ORDER BY option_item.ordinality)
+      FROM jsonb_array_elements(CASE WHEN jsonb_typeof(q.options) = 'array' THEN q.options ELSE '[]'::jsonb END)
+      WITH ORDINALITY AS option_item(value, ordinality)
+      WHERE jsonb_typeof(option_item.value) = 'object' AND option_item.value ? 'id' AND option_item.value ? 'text'), '[]'::jsonb),
     q.reference
   FROM public.exam_questions AS q
   WHERE q.published = true
     AND q.exam_slug = p_exam_slug
+    AND auth.uid() IS NOT NULL
   ORDER BY q.subject, q.topic, q.created_at, q.id;
 $function$;
 
@@ -69,8 +73,8 @@ AS $function$
     );
 $function$;
 
-REVOKE ALL ON FUNCTION public.get_published_exam_questions(text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.get_published_exam_questions(text) FROM PUBLIC, anon;
 REVOKE ALL ON FUNCTION public.submit_exam_question_answer(uuid, text) FROM PUBLIC;
 
-GRANT EXECUTE ON FUNCTION public.get_published_exam_questions(text) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.get_published_exam_questions(text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.submit_exam_question_answer(uuid, text) TO anon, authenticated;
