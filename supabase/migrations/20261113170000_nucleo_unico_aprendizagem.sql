@@ -343,7 +343,10 @@ SECURITY DEFINER
 SET search_path = pg_catalog, public
 AS $function$
   SELECT q.id, q.subject_id, q.topic_id, q.audience, q.subject, q.topic,
-         q.difficulty, q.statement, q.options, q.reference
+         q.difficulty, q.statement, COALESCE((SELECT jsonb_agg(jsonb_build_object('id', option_item.value ->> 'id', 'text', option_item.value ->> 'text') ORDER BY option_item.ordinality)
+      FROM jsonb_array_elements(CASE WHEN jsonb_typeof(q.options) = 'array' THEN q.options ELSE '[]'::jsonb END)
+      WITH ORDINALITY AS option_item(value, ordinality)
+      WHERE jsonb_typeof(option_item.value) = 'object' AND option_item.value ? 'id' AND option_item.value ? 'text'), '[]'::jsonb), q.reference
   FROM public.exam_questions q
   WHERE q.published = true
     AND q.exam_slug = p_exam_slug
