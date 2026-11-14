@@ -1,6 +1,6 @@
 -- Protege o gabarito das questões contra leitura direta pelo cliente.
 -- A listagem pública retorna somente enunciado e alternativas.
--- A correção é consultada separadamente após o envio da alternativa escolhida.
+-- A RPC de correção será criada na migration seguinte, junto com o registro protegido da tentativa.
 
 DROP POLICY IF EXISTS "Public reads published exam questions"
 ON public.exam_questions;
@@ -42,40 +42,7 @@ AS $function$
   ORDER BY q.subject, q.topic, q.created_at, q.id;
 $function$;
 
-CREATE OR REPLACE FUNCTION public.submit_exam_question_answer(
-  p_question_id uuid,
-  p_selected_option text
-)
-RETURNS TABLE (
-  is_correct boolean,
-  correct_option text,
-  explanation text,
-  reference text
-)
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = pg_catalog, public
-AS $function$
-  SELECT
-    q.correct_option = btrim(p_selected_option),
-    q.correct_option,
-    q.explanation,
-    q.reference
-  FROM public.exam_questions AS q
-  WHERE q.id = p_question_id
-    AND q.published = true
-    AND auth.uid() IS NOT NULL
-    AND p_selected_option IS NOT NULL
-    AND EXISTS (
-      SELECT 1
-      FROM jsonb_array_elements(CASE WHEN jsonb_typeof(q.options) = 'array' THEN q.options ELSE '[]'::jsonb END) AS option_item(value)
-      WHERE option_item.value ->> 'id' = btrim(p_selected_option)
-    );
-$function$;
+
 
 REVOKE ALL ON FUNCTION public.get_published_exam_questions(text) FROM PUBLIC, anon;
-REVOKE ALL ON FUNCTION public.submit_exam_question_answer(uuid, text) FROM PUBLIC, anon;
-
 GRANT EXECUTE ON FUNCTION public.get_published_exam_questions(text) TO authenticated;
-GRANT EXECUTE ON FUNCTION public.submit_exam_question_answer(uuid, text) TO authenticated;
