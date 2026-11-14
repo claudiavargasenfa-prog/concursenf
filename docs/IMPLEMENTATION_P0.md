@@ -38,6 +38,18 @@ A migration precisa ser aplicada em ambiente Supabase antes de validar consultas
 - Plano de estudos: PARCIAL. Persiste plano individual em exam_study_plans, mas usa catálogo estático e não registra eventos reais de estudo no núcleo.
 - Radar FGV: PENDENTE. A arquitetura atual guarda tentativas e assunto, mas ainda não possui taxonomia de distratores/armadilhas nem classificação validada de erros.
 
+### Sequência de migrations identificada na revisão P0.3
+A revisão do diretório supabase/migrations identificou cinco migrations relacionadas ao fluxo de questões e ao núcleo, não apenas as quatro listadas no relatório da auditoria externa. A migration intermediária 20261113150000_filtrar_questoes_ja_respondidas.sql também deve constar na conferência do histórico remoto.
+
+Ordem cronológica dos arquivos:
+1. 20261113110000_proteger_gabarito_questoes.sql
+2. 20261113130000_proteger_flashcards_e_persistir_progresso.sql
+3. 20261113150000_filtrar_questoes_ja_respondidas.sql
+4. 20261113170000_nucleo_unico_aprendizagem.sql
+5. 20261113180000_endurecer_nucleo_aprendizagem.sql
+
+A ordem precisa ser comparada com o histórico efetivo do banco antes de qualquer aplicação. A migration intermediária não deve ser ignorada apenas porque a auditoria Lovable não a incluiu na lista inicial.
+
 ### Segurança e banco
 - A migration P0 e a migration 20261113180000_endurecer_nucleo_aprendizagem.sql não foram aplicadas ao banco remoto.
 - Não há confirmação verificável de staging, backup recente, histórico remoto de migrations ou mecanismo de recuperação. A aplicação em produção permanece BLOQUEADA.
