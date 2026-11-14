@@ -25,14 +25,16 @@ AS $function$
     q.topic,
     q.difficulty,
     q.statement,
-    q.options,
+    COALESCE((SELECT jsonb_agg(jsonb_build_object('id', option_item.value ->> 'id', 'text', option_item.value ->> 'text') ORDER BY option_item.ordinality)
+      FROM jsonb_array_elements(CASE WHEN jsonb_typeof(q.options) = 'array' THEN q.options ELSE '[]'::jsonb END)
+      WITH ORDINALITY AS option_item(value, ordinality)
+      WHERE jsonb_typeof(option_item.value) = 'object' AND option_item.value ? 'id' AND option_item.value ? 'text'), '[]'::jsonb),
     q.reference
   FROM public.exam_questions AS q
   WHERE q.published = true
     AND q.exam_slug = p_exam_slug
-    AND (
-      auth.uid() IS NULL
-      OR NOT EXISTS (
+    AND auth.uid() IS NOT NULL
+    AND NOT EXISTS (
         SELECT 1
         FROM public.exam_question_attempts AS a
         WHERE a.user_id = auth.uid()
