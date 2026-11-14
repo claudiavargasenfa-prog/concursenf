@@ -68,7 +68,7 @@ A migration precisa ser aplicada em ambiente Supabase antes de validar consultas
 ### Definições dos indicadores
 - Conteúdos acessados: quantidade de IDs distintos de conteúdo com sessão activity_type=content.
 - Conteúdos concluídos: quantidade de IDs distintos com sessão content e completed=true; representa declaração do aluno, não domínio.
-- Questões registradas: quantidade de sessões activity_type=question recuperadas no histórico limitado a 200 eventos.
+- Questões registradas: quantidade de sessões activity_type=question recuperadas no histórico limitado a 200 eventos. A RPC de resposta cria uma sessão por primeira tentativa válida, na mesma transação da tentativa.
 - Aproveitamento: acertos divididos por sessões de questão com resultado isCorrect=true, considerando o conjunto de sessões retornado; não representa domínio global e pode ser nulo sem dados.
 - Flashcards revisados: quantidade de avaliações recuperadas no histórico limitado a 200.
 - Revisões pendentes: agendas vencidas e não concluídas retornadas pelo serviço existente; não inclui revisões futuras nem gera intervalos automáticos.
@@ -77,8 +77,9 @@ A migration precisa ser aplicada em ambiente Supabase antes de validar consultas
 - A rota depende da existência das tabelas e migrations P0/P0.2 no Supabase. Como elas não foram aplicadas/confirmadas no ambiente remoto, a operação real ainda não pode ser certificada.
 - Não foi criado algoritmo de repetição espaçada nem intervalo automático.
 - A avaliação do flashcard é persistida em flashcard_reviews; a agenda de revisão só é exibida quando existe registro em review_schedules.
-- O fluxo de questões permanece na rota /questoes e grava sessões quando a RPC corrige a resposta e a questão possui IDs curriculares.
+- O fluxo de questões permanece na rota /questoes. A RPC de correção grava a tentativa e a sessão de estudo na mesma transação, inclusive quando a questão ainda não possui IDs curriculares; o navegador não faz uma segunda gravação best-effort.
 - O plano de estudos legado ainda não sincroniza a conclusão de tarefas com study_sessions; permanece pendente.
+- O histórico local de questões não é mais importado automaticamente para uma conta autenticada, evitando misturar dados de pessoas diferentes que utilizem o mesmo navegador.
 - Simulados continuam sem fluxo completo de resposta/correção/conclusão.
 - Não foi possível executar jornada E2E autenticada, validar persistência após novo login ou isolamento de duas contas sem staging e credenciais de teste autorizadas.
 - Nenhum registro foi criado em contas reais. Nenhuma migration foi aplicada remotamente.
