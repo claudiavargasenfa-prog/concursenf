@@ -39,7 +39,6 @@ AS $function$
         FROM public.exam_question_attempts AS a
         WHERE a.user_id = auth.uid()
           AND a.question_id = q.id
-      )
     )
   ORDER BY q.subject, q.topic, q.created_at, q.id;
 $function$;
