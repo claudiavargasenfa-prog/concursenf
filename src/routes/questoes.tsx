@@ -71,21 +71,16 @@ function QuestionsPage() {
   useEffect(() => {
     let active = true;
     async function loadHistory() {
-      let localHistory: Attempt[] = [];
       try {
-        const stored = window.localStorage.getItem(HISTORY_KEY);
-        if (stored) localHistory = JSON.parse(stored) as Attempt[];
-      } catch {
-        window.localStorage.removeItem(HISTORY_KEY);
-      }
-
-      try {
-        const { data: authData } = await supabase.auth.getUser();
-        const user = authData.user;
+        const { data: authData, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
         if (!active) return;
+
+        const user = authData.user;
         setUserId(user?.id ?? null);
 
         if (user) {
+          // O histórico de uma conta nunca é importado do armazenamento global do navegador.
           const { data, error } = await (supabase as any)
             .from("exam_practice_history")
             .select("attempts")
@@ -93,24 +88,24 @@ function QuestionsPage() {
             .maybeSingle();
           if (error) throw error;
           if (!active) return;
-          const cloudHistory = Array.isArray(data?.attempts) ? data.attempts as Attempt[] : null;
-          const restored = cloudHistory ?? localHistory;
-          setHistory(restored);
-          window.localStorage.setItem(HISTORY_KEY, JSON.stringify(restored));
-          if (!cloudHistory && localHistory.length) {
-            await (supabase as any).from("exam_practice_history").upsert({
-              user_id: user.id,
-              attempts: localHistory,
-              updated_at: new Date().toISOString(),
-            });
-          }
+          setHistory(Array.isArray(data?.attempts) ? data.attempts as Attempt[] : []);
         } else {
+          let localHistory: Attempt[] = [];
+          try {
+            const stored = window.localStorage.getItem(HISTORY_KEY);
+            if (stored) localHistory = JSON.parse(stored) as Attempt[];
+          } catch {
+            window.localStorage.removeItem(HISTORY_KEY);
+          }
           setHistory(localHistory);
         }
-      } catch {
+      } catch (error) {
         if (active) {
           setUserId(null);
-          setHistory(localHistory);
+          setHistory([]);
+          setBankNotice(error instanceof Error
+            ? "Não foi possível carregar seu histórico sincronizado. " + error.message
+            : "Não foi possível carregar seu histórico sincronizado.");
         }
       } finally {
         if (active) setHydrated(true);
@@ -122,14 +117,14 @@ function QuestionsPage() {
 
   useEffect(() => {
     if (!hydrated) return;
-    const serialized = JSON.stringify(history);
-    window.localStorage.setItem(HISTORY_KEY, serialized);
     if (userId) {
       void (supabase as any).from("exam_practice_history").upsert({
         user_id: userId,
         attempts: history,
         updated_at: new Date().toISOString(),
       });
+    } else {
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
     }
   }, [history, hydrated, userId]);
 
@@ -353,7 +348,7 @@ function QuestionsPage() {
               </div>
               {showHistory && <div className="rounded-3xl border border-border bg-card p-5 shadow-sm"><h3 className="font-extrabold">Últimos treinos</h3>{history.length ? <ul className="mt-4 space-y-3">{history.map((attempt) => <li key={attempt.id} className="border-b border-border pb-3 last:border-0"><div className="flex items-center justify-between gap-2"><span className="text-xs font-bold">{attempt.discipline}</span><span className="text-sm font-black text-primary">{attempt.percentage}%</span></div><p className="mt-1 text-[11px] text-muted-foreground">{new Date(attempt.date).toLocaleString("pt-BR")} · {attempt.correct}/{attempt.total} acertos</p></li>)}</ul> : <p className="mt-3 text-sm text-muted-foreground">Seus resultados aparecerão aqui após o primeiro treino concluído.</p>}</div>}
               <div className="rounded-3xl bg-surface-soft p-5 text-surface-soft-foreground"><span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary"><CircleHelp className="size-5" /></span><h3 className="mt-4 font-extrabold">Aprenda com os comentários</h3><p className="mt-2 text-xs leading-6 text-soft-muted">Depois de responder, confira a justificativa e a referência indicada para aprofundar a revisão.</p></div>
-              <div className="rounded-3xl border border-border bg-card p-5"><div className="flex items-center gap-2 text-sm font-extrabold"><Clock3 className="size-4 text-primary" /> Seu histórico é local</div><p className="mt-2 text-xs leading-6 text-muted-foreground">Os resultados ficam salvos neste navegador e dispositivo. Ainda não são sincronizados entre aparelhos ou contas.</p></div>
+              <div className="rounded-3xl border border-border bg-card p-5"><div className="flex items-center gap-2 text-sm font-extrabold"><Clock3 className="size-4 text-primary" /> Histórico individual</div><p className="mt-2 text-xs leading-6 text-muted-foreground">Quando você está autenticado, os resultados são salvos na sua conta. Sem autenticação, o histórico permanece neste navegador.</p></div>
             </aside>
           </div>
         </div>
