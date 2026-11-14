@@ -62,6 +62,7 @@ function QuestionsPage() {
   const [showHistory, setShowHistory] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [historyStorageMode, setHistoryStorageMode] = useState<"pending" | "cloud" | "local" | "disabled">("pending");
   const [finished, setFinished] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [answerResult, setAnswerResult] = useState<QuestionAnswerResult | null>(null);
@@ -80,6 +81,7 @@ function QuestionsPage() {
         setUserId(user?.id ?? null);
 
         if (user) {
+          setHistoryStorageMode("cloud");
           // O histórico de uma conta nunca é importado do armazenamento global do navegador.
           const { data, error } = await (supabase as any)
             .from("exam_practice_history")
@@ -90,6 +92,7 @@ function QuestionsPage() {
           if (!active) return;
           setHistory(Array.isArray(data?.attempts) ? data.attempts as Attempt[] : []);
         } else {
+          setHistoryStorageMode("local");
           let localHistory: Attempt[] = [];
           try {
             const stored = window.localStorage.getItem(HISTORY_KEY);
@@ -102,6 +105,7 @@ function QuestionsPage() {
       } catch (error) {
         if (active) {
           setUserId(null);
+          setHistoryStorageMode("disabled");
           setHistory([]);
           setBankNotice(error instanceof Error
             ? "Não foi possível carregar seu histórico sincronizado. " + error.message
@@ -117,16 +121,16 @@ function QuestionsPage() {
 
   useEffect(() => {
     if (!hydrated) return;
-    if (userId) {
+    if (historyStorageMode === "cloud" && userId) {
       void (supabase as any).from("exam_practice_history").upsert({
         user_id: userId,
         attempts: history,
         updated_at: new Date().toISOString(),
       });
-    } else {
+    } else if (historyStorageMode === "local") {
       window.localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
     }
-  }, [history, hydrated, userId]);
+  }, [history, historyStorageMode, hydrated, userId]);
 
   useEffect(() => {
     let active = true;
