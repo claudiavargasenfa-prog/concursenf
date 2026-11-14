@@ -382,7 +382,7 @@ BEGIN
     SELECT 1 FROM public.exam_questions q
     WHERE q.id = p_question_id AND q.published = true
       AND EXISTS (
-        SELECT 1 FROM jsonb_array_elements(q.options) option_item(value)
+        SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof(q.options) = 'array' THEN q.options ELSE '[]'::jsonb END) option_item(value)
         WHERE option_item.value ->> 'id' = btrim(p_selected_option)
       )
   ) THEN
