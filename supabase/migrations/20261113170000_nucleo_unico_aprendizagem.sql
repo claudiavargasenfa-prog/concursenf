@@ -293,9 +293,15 @@ CREATE POLICY "Admins manage simulation questions"
 ON public.exam_simulation_questions FOR ALL TO authenticated
 USING (public.is_catalog_admin()) WITH CHECK (public.is_catalog_admin());
 DROP POLICY IF EXISTS "Users manage own simulation attempts" ON public.exam_simulation_attempts;
-CREATE POLICY "Users manage own simulation attempts"
-ON public.exam_simulation_attempts FOR ALL TO authenticated
-USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users read own simulation attempts" ON public.exam_simulation_attempts;
+DROP POLICY IF EXISTS "Users start own simulation attempts" ON public.exam_simulation_attempts;
+CREATE POLICY "Users read own simulation attempts"
+ON public.exam_simulation_attempts FOR SELECT TO authenticated
+USING (auth.uid() = user_id);
+CREATE POLICY "Users start own simulation attempts"
+ON public.exam_simulation_attempts FOR INSERT TO authenticated
+WITH CHECK (auth.uid() = user_id);
+-- Atualização de respostas e pontuação deverá ocorrer por RPC segura, não por UPDATE direto do cliente.
 
 -- Catálogo é público apenas para leitura; administração permanece restrita.
 ALTER TABLE public.learning_subjects ENABLE ROW LEVEL SECURITY;
