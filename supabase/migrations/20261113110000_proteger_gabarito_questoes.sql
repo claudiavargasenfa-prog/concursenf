@@ -65,16 +65,17 @@ AS $function$
   FROM public.exam_questions AS q
   WHERE q.id = p_question_id
     AND q.published = true
+    AND auth.uid() IS NOT NULL
     AND p_selected_option IS NOT NULL
     AND EXISTS (
       SELECT 1
-      FROM jsonb_array_elements(q.options) AS option_item(value)
+      FROM jsonb_array_elements(CASE WHEN jsonb_typeof(q.options) = 'array' THEN q.options ELSE '[]'::jsonb END) AS option_item(value)
       WHERE option_item.value ->> 'id' = btrim(p_selected_option)
     );
 $function$;
 
 REVOKE ALL ON FUNCTION public.get_published_exam_questions(text) FROM PUBLIC, anon;
-REVOKE ALL ON FUNCTION public.submit_exam_question_answer(uuid, text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.submit_exam_question_answer(uuid, text) FROM PUBLIC, anon;
 
 GRANT EXECUTE ON FUNCTION public.get_published_exam_questions(text) TO authenticated;
-GRANT EXECUTE ON FUNCTION public.submit_exam_question_answer(uuid, text) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.submit_exam_question_answer(uuid, text) TO authenticated;
