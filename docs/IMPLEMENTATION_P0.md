@@ -49,6 +49,7 @@ Ordem cronológica dos arquivos:
 5. 20261113180000_endurecer_nucleo_aprendizagem.sql
 
 A ordem precisa ser comparada com o histórico efetivo do banco antes de qualquer aplicação. A migration intermediária não deve ser ignorada apenas porque a auditoria Lovable não a incluiu na lista inicial.
+A primeira migration remove a leitura pública e entrega somente os campos id/text das alternativas; a RPC de correção é criada apenas na migration seguinte, quando a tabela de tentativas e a proteção contra chamadas repetidas já existem. Assim, não há uma etapa intermediária em que a função de correção revele o gabarito sem registrar a tentativa.
 
 ### Segurança e banco
 - A migration P0 e a migration 20261113180000_endurecer_nucleo_aprendizagem.sql não foram aplicadas ao banco remoto.
