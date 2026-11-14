@@ -8,7 +8,6 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CmsSections } from "@/components/site/CmsSections";
 import { supabase } from "@/integrations/supabase/client";
-import { recordStudySession } from "@/lib/learning/activity.service";
 type PracticeQuestion = {
   id: string;
   subject_id?: string | null;
@@ -218,20 +217,6 @@ function QuestionsPage() {
         reference: result.reference ?? null,
       };
       setAnswerResult(normalized);
-      if (userId && question.subject_id && question.topic_id) {
-        try {
-          await recordStudySession({
-            activityType: "question",
-            subjectId: question.subject_id,
-            topicId: question.topic_id,
-            sourceId: question.id,
-            completed: true,
-            metadata: { isCorrect: normalized.is_correct },
-          });
-        } catch (activityError) {
-          console.warn("[Aprendizagem] Falha ao registrar sessão da questão:", activityError);
-        }
-      }
       setQuestionBank((previous) => previous.filter((item) => item.id !== question.id));
       setAnswers((previous) => [...previous, {
         questionId: question.id,
