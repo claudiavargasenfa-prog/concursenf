@@ -9,9 +9,9 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 // Public (publishable) backend connection values. Fallback so every build —
 // preview, published, or GitHub-synced without .env — ships the browser config.
 // Never put secret keys here.
-process.env.VITE_SUPABASE_URL ||= "https://auobczbkqfbfkbbdwzjp.supabase.co";
-process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||= "sb_publishable_yK5PNZLNnV66_5vTeju6bQ__9oA5x0_";
-process.env.VITE_SUPABASE_PROJECT_ID ||= "auobczbkqfbfkbbdwzjp";
+process.env["VITE_SUPABASE_URL"] ||= "https://auobczbkqfbfkbbdwzjp.supabase.co";
+process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||= "sb_publishable_yK5PNZLNnV66_5vTeju6bQ__9oA5x0_";
+process.env["VITE_SUPABASE_PROJECT_ID"] ||= "auobczbkqfbfkbbdwzjp";
 
 export default defineConfig({
   tanstackStart: {
