@@ -1,17 +1,17 @@
--- ConcursEnf | Validacao somente leitura da Central de Administracao do Site
+-- ConcursEnf | Validacao POS-APLICACAO (somente leitura) da Central de Administracao do Site
 -- Este arquivo NAO cria, altera ou remove objetos.
--- Pode ser executado antes e depois da aplicacao autorizada da migration.
+-- Execute somente DEPOIS da aplicacao autorizada da migration.
 -- Execute no SQL Editor do projeto Supabase, com permissao para consultar os catalogos.
--- Cada bloco retorna diagnosticos; compare os resultados com os criterios abaixo.
+-- Cada bloco retorna diagnosticos para conferir o estado final.
 --
 -- IMPORTANTE:
 -- 1. Nao execute aqui a migration 0004 nem qualquer arquivo de supabase/migrations.
 -- 2. Antes de aplicar qualquer migration, confirme qual runner e a fonte oficial.
--- 3. Se algum objeto ja existir, nao conclua que a migration foi aplicada integralmente.
+-- 3. A existencia isolada de um objeto nao comprova que a migration foi aplicada integralmente.
 -- 4. A conta administrativa esperada e concursenfe@gmail.com, com role catalog_admin
 --    em raw_app_meta_data (app_metadata no JWT).
 --
--- CRITERIOS POS-APLICACAO:
+-- CRITERIOS ESPERADOS:
 -- - As tres tabelas devem existir e ter RLS habilitado.
 -- - is_catalog_admin() deve existir e retornar true para a sessao da administradora autenticada.
 -- - site_settings deve permitir leitura publica somente de theme e brand.
