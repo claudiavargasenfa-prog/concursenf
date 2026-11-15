@@ -31,7 +31,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment variables (keep secrets and local configuration out of Git)
-.env
+# Environment variables: .env holds only public (publishable) values and is required by the build.
+# Never put secret keys in it.
 .env.*
 !.env.example
