@@ -29,9 +29,11 @@ export type Database = {
           source_reference: string | null
           storage_path: string | null
           subject: string
+          subject_id: string | null
           summary: string | null
           title: string
           topic: string
+          topic_id: string | null
           updated_at: string
         }
         Insert: {
@@ -48,9 +50,11 @@ export type Database = {
           source_reference?: string | null
           storage_path?: string | null
           subject: string
+          subject_id?: string | null
           summary?: string | null
           title: string
           topic: string
+          topic_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -67,12 +71,29 @@ export type Database = {
           source_reference?: string | null
           storage_path?: string | null
           subject?: string
+          subject_id?: string | null
           summary?: string | null
           title?: string
           topic?: string
+          topic_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "exam_content_items_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "learning_subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_content_items_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "learning_topics"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       exam_flashcards: {
         Row: {
@@ -86,7 +107,9 @@ export type Database = {
           published: boolean
           source_reference: string | null
           subject: string
+          subject_id: string | null
           topic: string
+          topic_id: string | null
           updated_at: string
         }
         Insert: {
@@ -100,7 +123,9 @@ export type Database = {
           published?: boolean
           source_reference?: string | null
           subject: string
+          subject_id?: string | null
           topic: string
+          topic_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -114,10 +139,97 @@ export type Database = {
           published?: boolean
           source_reference?: string | null
           subject?: string
+          subject_id?: string | null
           topic?: string
+          topic_id?: string | null
           updated_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "exam_flashcards_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "learning_subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_flashcards_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "learning_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_practice_history: {
+        Row: {
+          attempts: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempts?: Json
+          updated_at?: string
+          user_id?: string
+        }
         Relationships: []
+      }
+      exam_question_attempts: {
+        Row: {
+          created_at: string
+          is_correct: boolean | null
+          question_id: string
+          selected_option: string
+          subject_id: string | null
+          topic_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          is_correct?: boolean | null
+          question_id: string
+          selected_option: string
+          subject_id?: string | null
+          topic_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          is_correct?: boolean | null
+          question_id?: string
+          selected_option?: string
+          subject_id?: string | null
+          topic_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_question_attempts_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "exam_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_question_attempts_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "learning_subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_question_attempts_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "learning_topics"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       exam_questions: {
         Row: {
@@ -136,7 +248,9 @@ export type Database = {
           source_year: number | null
           statement: string
           subject: string
+          subject_id: string | null
           topic: string
+          topic_id: string | null
           updated_at: string
         }
         Insert: {
@@ -155,7 +269,9 @@ export type Database = {
           source_year?: number | null
           statement: string
           subject: string
+          subject_id?: string | null
           topic: string
+          topic_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -174,10 +290,317 @@ export type Database = {
           source_year?: number | null
           statement?: string
           subject?: string
+          subject_id?: string | null
           topic?: string
+          topic_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_questions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "learning_subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_questions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "learning_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_simulation_attempts: {
+        Row: {
+          answers: Json
+          completed_at: string | null
+          correct_answers: number
+          id: string
+          simulation_id: string
+          started_at: string
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          completed_at?: string | null
+          correct_answers?: number
+          id?: string
+          simulation_id: string
+          started_at?: string
+          total_questions?: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          completed_at?: string | null
+          correct_answers?: number
+          id?: string
+          simulation_id?: string
+          started_at?: string
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_simulation_attempts_simulation_id_fkey"
+            columns: ["simulation_id"]
+            isOneToOne: false
+            referencedRelation: "exam_simulations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_simulation_questions: {
+        Row: {
+          position: number
+          question_id: string
+          simulation_id: string
+        }
+        Insert: {
+          position?: number
+          question_id: string
+          simulation_id: string
+        }
+        Update: {
+          position?: number
+          question_id?: string
+          simulation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_simulation_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "exam_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_simulation_questions_simulation_id_fkey"
+            columns: ["simulation_id"]
+            isOneToOne: false
+            referencedRelation: "exam_simulations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_simulations: {
+        Row: {
+          audience: string
+          created_at: string
+          description: string | null
+          duration_minutes: number | null
+          exam_slug: string
+          id: string
+          published: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          exam_slug: string
+          id?: string
+          published?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          exam_slug?: string
+          id?: string
+          published?: boolean
+          title?: string
           updated_at?: string
         }
         Relationships: []
+      }
+      exam_study_plans: {
+        Row: {
+          plan: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          plan?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          plan?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      flashcard_reviews: {
+        Row: {
+          flashcard_id: string
+          id: string
+          next_review_at: string | null
+          rating: number
+          response_seconds: number | null
+          reviewed_at: string
+          user_id: string
+        }
+        Insert: {
+          flashcard_id: string
+          id?: string
+          next_review_at?: string | null
+          rating: number
+          response_seconds?: number | null
+          reviewed_at?: string
+          user_id: string
+        }
+        Update: {
+          flashcard_id?: string
+          id?: string
+          next_review_at?: string | null
+          rating?: number
+          response_seconds?: number | null
+          reviewed_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flashcard_reviews_flashcard_id_fkey"
+            columns: ["flashcard_id"]
+            isOneToOne: false
+            referencedRelation: "exam_flashcards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_progress: {
+        Row: {
+          confidence: number | null
+          correct_answers: number
+          id: string
+          last_studied_at: string | null
+          questions_answered: number
+          status: string
+          subject_id: string
+          topic_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          confidence?: number | null
+          correct_answers?: number
+          id?: string
+          last_studied_at?: string | null
+          questions_answered?: number
+          status?: string
+          subject_id: string
+          topic_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          confidence?: number | null
+          correct_answers?: number
+          id?: string
+          last_studied_at?: string | null
+          questions_answered?: number
+          status?: string
+          subject_id?: string
+          topic_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_progress_topic_subject_fk"
+            columns: ["subject_id", "topic_id"]
+            isOneToOne: false
+            referencedRelation: "learning_topics"
+            referencedColumns: ["subject_id", "id"]
+          },
+        ]
+      }
+      learning_subjects: {
+        Row: {
+          active: boolean
+          created_at: string
+          exam_slug: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          exam_slug: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          exam_slug?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      learning_topics: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          subject_id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          subject_id: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          subject_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_topics_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "learning_subjects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       material_areas: {
         Row: {
@@ -452,12 +875,137 @@ export type Database = {
         }
         Relationships: []
       }
+      review_schedules: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          due_at: string
+          id: string
+          source_id: string | null
+          source_type: string
+          subject_id: string
+          topic_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          due_at: string
+          id?: string
+          source_id?: string | null
+          source_type: string
+          subject_id: string
+          topic_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          due_at?: string
+          id?: string
+          source_id?: string | null
+          source_type?: string
+          subject_id?: string
+          topic_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_schedules_topic_subject_fk"
+            columns: ["subject_id", "topic_id"]
+            isOneToOne: false
+            referencedRelation: "learning_topics"
+            referencedColumns: ["subject_id", "id"]
+          },
+        ]
+      }
+      study_sessions: {
+        Row: {
+          activity_type: string
+          completed: boolean
+          completed_at: string | null
+          duration_seconds: number
+          id: string
+          metadata: Json
+          source_id: string | null
+          started_at: string
+          subject_id: string | null
+          topic_id: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          completed?: boolean
+          completed_at?: string | null
+          duration_seconds?: number
+          id?: string
+          metadata?: Json
+          source_id?: string | null
+          started_at?: string
+          subject_id?: string | null
+          topic_id?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          completed?: boolean
+          completed_at?: string | null
+          duration_seconds?: number
+          id?: string
+          metadata?: Json
+          source_id?: string | null
+          started_at?: string
+          subject_id?: string | null
+          topic_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_sessions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "learning_subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_sessions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "learning_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      get_published_exam_questions: {
+        Args: { p_exam_slug?: string }
+        Returns: {
+          audience: string
+          difficulty: string
+          id: string
+          options: Json
+          reference: string
+          statement: string
+          subject: string
+          subject_id: string
+          topic: string
+          topic_id: string
+        }[]
+      }
       is_catalog_admin: { Args: never; Returns: boolean }
+      submit_exam_question_answer: {
+        Args: { p_question_id: string; p_selected_option: string }
+        Returns: {
+          correct_option: string
+          explanation: string
+          is_correct: boolean
+          reference: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
