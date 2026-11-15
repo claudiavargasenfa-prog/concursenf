@@ -100,8 +100,10 @@ JOIN pg_namespace n ON n.oid = p.pronamespace
 WHERE n.nspname = 'public'
   AND p.proname = 'is_catalog_admin';
 
--- Resultado funcional da RPC para a sessao atual.
--- Execute esta consulta estando autenticada como a administradora.
+-- Resultado funcional no contexto SQL atual. ATENCAO: no SQL Editor, o contexto
+-- normalmente e postgres e nao reproduz o JWT da administradora; portanto este
+-- resultado NAO comprova a autorizacao de concursenfe@gmail.com. A validacao real
+-- deve ser feita depois, entrando no app com essa conta e abrindo /admin.
 SELECT public.is_catalog_admin() AS sessao_atual_e_admin;
 
 -- ============================================================
