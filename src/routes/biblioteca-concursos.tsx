@@ -38,14 +38,7 @@ function ExamLibraryPage() {
         ]);
         if (contentResult.error || cardResult.error) throw contentResult.error || cardResult.error;
         const rawItems = (contentResult.data ?? []) as ContentItem[];
-        const signedItems = await Promise.all(rawItems.map(async (item) => {
-          if (!item.storage_path) return item;
-          try {
-            const { url } = await getMaterialFileUrl({ data: { kind: "content", id: item.id } });
-            return { ...item, resource_url: url };
-          } catch { return item; }
-        }));
-        setItems(signedItems);
+        setItems(rawItems);
         setCards((cardResult.data ?? []) as Flashcard[]);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Não foi possível carregar os conteúdos.");
@@ -91,7 +84,7 @@ function ExamLibraryPage() {
               <h3 className="mt-2 text-lg font-extrabold">{item.title}</h3>
               {item.summary && <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.summary}</p>}
               {item.body && <details className="mt-4 rounded-xl bg-muted/50 p-3"><summary className="cursor-pointer text-sm font-bold">Abrir conteúdo da aula</summary><div className="mt-3 whitespace-pre-wrap text-sm leading-7 text-foreground">{item.body}</div></details>}
-              {item.resource_url && <a href={item.resource_url} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline"><ExternalLink className="size-4" /> Abrir material</a>}
+              {item.storage_path ? <button type="button" onClick={async () => { const w = window.open("", "_blank"); try { const { url } = await getMaterialFileUrl({ data: { kind: "content", id: item.id } }); if (w) w.location.href = url; else window.location.href = url; } catch (e) { w?.close(); window.alert(e instanceof Error ? e.message : "Arquivo indisponível."); } }} className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline"><ExternalLink className="size-4" /> Abrir material</button> : item.resource_url && <a href={item.resource_url} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline"><ExternalLink className="size-4" /> Abrir material</a>}
               {item.source_reference && <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">Fonte: {item.source_reference}</p>}
             </article>)}
             {visibleItems.length === 0 && <p className="rounded-2xl border border-dashed border-border p-8 text-sm text-muted-foreground md:col-span-2">Nenhum material publicado para este filtro.</p>}

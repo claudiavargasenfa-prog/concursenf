@@ -32,9 +32,7 @@ export function CmsSections({ page }: { page: PageKey }) {
       const loaded = (data ?? []) as CmsSection[];
       const resolved = await Promise.all(loaded.map(async (section) => {
         if (!section.media_url?.startsWith("storage:")) return [section.id, section.media_url ?? ""] as const;
-        const path = section.media_url.slice("storage:".length);
-        const { data: signed, error: signedError } = await (supabase as any).storage.from("concursenf-site").createSignedUrl(path, 3600);
-        return [section.id, signedError ? "" : signed?.signedUrl ?? ""] as const;
+        return [section.id, `/api/files/site/${section.id}`] as const;
       }));
       if (!active) return;
       setResolvedMedia(Object.fromEntries(resolved));

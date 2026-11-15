@@ -11,8 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AprendizagemRouteImport } from './routes/aprendizagem'
 import { Route as AdminConteudosRouteImport } from './routes/admin-conteudos'
+import { Route as AprendizagemRouteImport } from './routes/aprendizagem'
 import { Route as BibliotecaConcursosRouteImport } from './routes/biblioteca-concursos'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as ConcursoRouteImport } from './routes/concurso'
@@ -20,15 +20,11 @@ import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as MateriaisRouteImport } from './routes/materiais'
 import { Route as PlanoDeEstudosRouteImport } from './routes/plano-de-estudos'
 import { Route as QuestoesRouteImport } from './routes/questoes'
+import { Route as ApiFilesKindIdRouteImport } from './routes/api/files.$kind.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AprendizagemRoute = AprendizagemRouteImport.update({
-  id: '/aprendizagem',
-  path: '/aprendizagem',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -39,6 +35,11 @@ const AdminRoute = AdminRouteImport.update({
 const AdminConteudosRoute = AdminConteudosRouteImport.update({
   id: '/admin-conteudos',
   path: '/admin-conteudos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AprendizagemRoute = AprendizagemRouteImport.update({
+  id: '/aprendizagem',
+  path: '/aprendizagem',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BibliotecaConcursosRoute = BibliotecaConcursosRouteImport.update({
@@ -76,12 +77,17 @@ const QuestoesRoute = QuestoesRouteImport.update({
   path: '/questoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiFilesKindIdRoute = ApiFilesKindIdRouteImport.update({
+  id: '/api/files/$kind/$id',
+  path: '/api/files/$kind/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/aprendizagem': typeof AprendizagemRoute
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/admin-conteudos': typeof AdminConteudosRoute
+  '/aprendizagem': typeof AprendizagemRoute
   '/biblioteca-concursos': typeof BibliotecaConcursosRoute
   '/cadastro': typeof CadastroRoute
   '/concurso': typeof ConcursoRoute
@@ -89,12 +95,13 @@ export interface FileRoutesByFullPath {
   '/materiais': typeof MateriaisRoute
   '/plano-de-estudos': typeof PlanoDeEstudosRoute
   '/questoes': typeof QuestoesRoute
+  '/api/files/$kind/$id': typeof ApiFilesKindIdRoute
 }
 export interface FileRoutesByTo {
-  '/aprendizagem': typeof AprendizagemRoute
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/admin-conteudos': typeof AdminConteudosRoute
+  '/aprendizagem': typeof AprendizagemRoute
   '/biblioteca-concursos': typeof BibliotecaConcursosRoute
   '/cadastro': typeof CadastroRoute
   '/concurso': typeof ConcursoRoute
@@ -102,13 +109,14 @@ export interface FileRoutesByTo {
   '/materiais': typeof MateriaisRoute
   '/plano-de-estudos': typeof PlanoDeEstudosRoute
   '/questoes': typeof QuestoesRoute
+  '/api/files/$kind/$id': typeof ApiFilesKindIdRoute
 }
 export interface FileRoutesById {
-  '/aprendizagem': typeof AprendizagemRoute
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/admin-conteudos': typeof AdminConteudosRoute
+  '/aprendizagem': typeof AprendizagemRoute
   '/biblioteca-concursos': typeof BibliotecaConcursosRoute
   '/cadastro': typeof CadastroRoute
   '/concurso': typeof ConcursoRoute
@@ -116,14 +124,15 @@ export interface FileRoutesById {
   '/materiais': typeof MateriaisRoute
   '/plano-de-estudos': typeof PlanoDeEstudosRoute
   '/questoes': typeof QuestoesRoute
+  '/api/files/$kind/$id': typeof ApiFilesKindIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/aprendizagem'
     | '/admin'
     | '/admin-conteudos'
+    | '/aprendizagem'
     | '/biblioteca-concursos'
     | '/cadastro'
     | '/concurso'
@@ -131,11 +140,13 @@ export interface FileRouteTypes {
     | '/materiais'
     | '/plano-de-estudos'
     | '/questoes'
+    | '/api/files/$kind/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
     | '/admin-conteudos'
+    | '/aprendizagem'
     | '/biblioteca-concursos'
     | '/cadastro'
     | '/concurso'
@@ -143,11 +154,13 @@ export interface FileRouteTypes {
     | '/materiais'
     | '/plano-de-estudos'
     | '/questoes'
+    | '/api/files/$kind/$id'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/admin-conteudos'
+    | '/aprendizagem'
     | '/biblioteca-concursos'
     | '/cadastro'
     | '/concurso'
@@ -155,13 +168,14 @@ export interface FileRouteTypes {
     | '/materiais'
     | '/plano-de-estudos'
     | '/questoes'
+    | '/api/files/$kind/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AprendizagemRoute: typeof AprendizagemRoute
   AdminRoute: typeof AdminRoute
   AdminConteudosRoute: typeof AdminConteudosRoute
+  AprendizagemRoute: typeof AprendizagemRoute
   BibliotecaConcursosRoute: typeof BibliotecaConcursosRoute
   CadastroRoute: typeof CadastroRoute
   ConcursoRoute: typeof ConcursoRoute
@@ -169,6 +183,7 @@ export interface RootRouteChildren {
   MateriaisRoute: typeof MateriaisRoute
   PlanoDeEstudosRoute: typeof PlanoDeEstudosRoute
   QuestoesRoute: typeof QuestoesRoute
+  ApiFilesKindIdRoute: typeof ApiFilesKindIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/admin-conteudos'
       fullPath: '/admin-conteudos'
       preLoaderRoute: typeof AdminConteudosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aprendizagem': {
+      id: '/aprendizagem'
+      path: '/aprendizagem'
+      fullPath: '/aprendizagem'
+      preLoaderRoute: typeof AprendizagemRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/biblioteca-concursos': {
@@ -243,14 +265,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuestoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/files/$kind/$id': {
+      id: '/api/files/$kind/$id'
+      path: '/api/files/$kind/$id'
+      fullPath: '/api/files/$kind/$id'
+      preLoaderRoute: typeof ApiFilesKindIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  AprendizagemRoute: AprendizagemRoute,
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AdminConteudosRoute: AdminConteudosRoute,
+  AprendizagemRoute: AprendizagemRoute,
   BibliotecaConcursosRoute: BibliotecaConcursosRoute,
   CadastroRoute: CadastroRoute,
   ConcursoRoute: ConcursoRoute,
@@ -258,6 +287,7 @@ const rootRouteChildren: RootRouteChildren = {
   MateriaisRoute: MateriaisRoute,
   PlanoDeEstudosRoute: PlanoDeEstudosRoute,
   QuestoesRoute: QuestoesRoute,
+  ApiFilesKindIdRoute: ApiFilesKindIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
