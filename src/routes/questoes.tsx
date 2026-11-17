@@ -123,7 +123,7 @@ function QuestionsPage() {
   useEffect(() => {
     if (!hydrated) return;
     if (historyStorageMode === "cloud" && userId) {
-      void (supabase as any).from("exam_practice_history").upsert({
+      void dynamicSupabase.from("exam_practice_history").upsert({
         user_id: userId,
         attempts: history,
         updated_at: new Date().toISOString(),
@@ -143,7 +143,7 @@ function QuestionsPage() {
           if (active) setBankNotice("Entre na sua conta para acessar as questões, registrar suas respostas e acompanhar seu desempenho.");
           return;
         }
-        const { data, error } = await (supabase as any)
+        const { data, error } = await dynamicSupabase
           .rpc("get_published_exam_questions", { p_exam_slug: "ebserh-hubrasil" });
         if (error) throw error;
         if (!active) return;
@@ -216,7 +216,7 @@ function QuestionsPage() {
     setSubmitting(true);
     setBankNotice("");
     try {
-      const { data, error } = await (supabase as any).rpc("submit_exam_question_answer", {
+      const { data, error } = await dynamicSupabase.rpc("submit_exam_question_answer", {
         p_question_id: question.id,
         p_selected_option: selected,
       });
