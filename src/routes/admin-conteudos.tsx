@@ -83,7 +83,7 @@ function AdminExamContentPage() {
     event.preventDefault();
     setSaving(true); setError(""); setMessage("");
     try {
-      const db = supabase as any;
+      const db = dynamicSupabase;
       const curriculum = await ensureLearningTopic({
         examSlug: "ebserh-hubrasil", subjectName: subject, topicName: topic,
       });
