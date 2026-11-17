@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, BookOpen, CheckCircle2, Clock3, Eye, EyeOff, Layers3, RefreshCw, Target } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { supabase } from "@/integrations/supabase/client";
+import { dynamicSupabase } from "@/lib/supabase/dynamic-client";
 import { getLearningContents } from "@/lib/learning/catalog.service";
 import { recordFlashcardReview, recordStudySession } from "@/lib/learning/activity.service";
 import { getMyDueReviews } from "@/lib/learning/review.service";
@@ -47,7 +47,7 @@ function LearningPage() {
       if (authError) throw authError;
       if (!auth.user) { setUserId(null); setError("Entre na sua conta para acessar seu painel de aprendizagem."); return; }
       setUserId(auth.user.id);
-      const db = supabase as any;
+      const db = dynamicSupabase;
       const [contentRows, cardResult, sessionResult, reviewResult, due] = await Promise.all([
         getLearningContents(),
         db.from("exam_flashcards").select("id,front,back,subject,topic,subject_id,topic_id").eq("exam_slug", "ebserh-hubrasil").eq("published", true).order("created_at"),
