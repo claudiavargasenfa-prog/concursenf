@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminConteudosRouteImport } from './routes/admin-conteudos'
 import { Route as AprendizagemRouteImport } from './routes/aprendizagem'
+import { Route as AprendaAEstudarRouteImport } from './routes/aprenda-a-estudar'
 import { Route as BibliotecaConcursosRouteImport } from './routes/biblioteca-concursos'
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as ConcursoRouteImport } from './routes/concurso'
@@ -40,6 +41,11 @@ const AdminConteudosRoute = AdminConteudosRouteImport.update({
 const AprendizagemRoute = AprendizagemRouteImport.update({
   id: '/aprendizagem',
   path: '/aprendizagem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AprendaAEstudarRoute = AprendaAEstudarRouteImport.update({
+  id: '/aprenda-a-estudar',
+  path: '/aprenda-a-estudar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BibliotecaConcursosRoute = BibliotecaConcursosRouteImport.update({
@@ -88,6 +94,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/admin-conteudos': typeof AdminConteudosRoute
   '/aprendizagem': typeof AprendizagemRoute
+  '/aprenda-a-estudar': typeof AprendaAEstudarRoute
+  '/aprenda-a-estudar': typeof AprendaAEstudarRoute
   '/biblioteca-concursos': typeof BibliotecaConcursosRoute
   '/cadastro': typeof CadastroRoute
   '/concurso': typeof ConcursoRoute
@@ -102,6 +110,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/admin-conteudos': typeof AdminConteudosRoute
   '/aprendizagem': typeof AprendizagemRoute
+  '/aprenda-a-estudar': typeof AprendaAEstudarRoute
   '/biblioteca-concursos': typeof BibliotecaConcursosRoute
   '/cadastro': typeof CadastroRoute
   '/concurso': typeof ConcursoRoute
@@ -117,6 +126,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/admin-conteudos': typeof AdminConteudosRoute
   '/aprendizagem': typeof AprendizagemRoute
+  '/aprenda-a-estudar': typeof AprendaAEstudarRoute
   '/biblioteca-concursos': typeof BibliotecaConcursosRoute
   '/cadastro': typeof CadastroRoute
   '/concurso': typeof ConcursoRoute
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-conteudos'
     | '/aprendizagem'
+    | '/aprenda-a-estudar'
     | '/biblioteca-concursos'
     | '/cadastro'
     | '/concurso'
@@ -176,6 +187,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AdminConteudosRoute: typeof AdminConteudosRoute
   AprendizagemRoute: typeof AprendizagemRoute
+  AprendaAEstudarRoute: typeof AprendaAEstudarRoute
   BibliotecaConcursosRoute: typeof BibliotecaConcursosRoute
   CadastroRoute: typeof CadastroRoute
   ConcursoRoute: typeof ConcursoRoute
@@ -207,6 +219,13 @@ declare module '@tanstack/react-router' {
       path: '/admin-conteudos'
       fullPath: '/admin-conteudos'
       preLoaderRoute: typeof AdminConteudosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aprenda-a-estudar': {
+      id: '/aprenda-a-estudar'
+      path: '/aprenda-a-estudar'
+      fullPath: '/aprenda-a-estudar'
+      preLoaderRoute: typeof AprendaAEstudarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/aprendizagem': {
@@ -280,6 +299,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AdminConteudosRoute: AdminConteudosRoute,
   AprendizagemRoute: AprendizagemRoute,
+  AprendaAEstudarRoute: AprendaAEstudarRoute,
   BibliotecaConcursosRoute: BibliotecaConcursosRoute,
   CadastroRoute: CadastroRoute,
   ConcursoRoute: ConcursoRoute,
