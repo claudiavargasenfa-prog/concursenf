@@ -55,7 +55,7 @@ const modules = [
 function LearnToStudyPage() {
   const [active, setActive] = useState("metodo");
   const [completed, setCompleted] = useState<string[]>([]);
-  const current = modules.find((item) => item.id === active) ?? modules[0];
+  const current = modules.find((item) => item.id === active) ?? modules[0]!;
   const toggleDone = (key: string) => setCompleted((items) => items.includes(key) ? items.filter((item) => item !== key) : [...items, key]);
   const totalLessons = modules.reduce((sum, item) => sum + item.lessons.length, 0);
   return <>
@@ -86,7 +86,7 @@ function LearnToStudyPage() {
             </div>
             <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5">
               <p className="text-xs text-muted-foreground"><Clock3 className="mr-1 inline size-4" /> Avance no seu ritmo e retome quando precisar.</p>
-              <button type="button" onClick={() => { const index = modules.findIndex((item) => item.id === active); setActive(modules[(index + 1) % modules.length].id); }} className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground">Próximo módulo <ArrowRight className="size-4" /></button>
+              <button type="button" onClick={() => { const index = modules.findIndex((item) => item.id === active); setActive(modules[(index + 1) % modules.length]!.id); }} className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground">Próximo módulo <ArrowRight className="size-4" /></button>
             </div>
           </section>
         </div>
