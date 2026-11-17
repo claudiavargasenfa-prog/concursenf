@@ -12,6 +12,7 @@ import {
   ListChecks,
   FolderOpen,
   BookMarked,
+  Brain,
   Menu,
   Target,
   ShieldCheck,
@@ -33,6 +34,7 @@ const mobileLinks = [
   { label: "Biblioteca EBSERH", to: "/biblioteca-concursos", icon: BookMarked },
   { label: "Questões", to: "/questoes", icon: ListChecks },
   { label: "Meu plano", to: "/plano-de-estudos", icon: CalendarDays },
+  { label: "Aprenda a estudar", to: "/aprenda-a-estudar", icon: Brain },
   { label: "Minha aprendizagem", to: "/aprendizagem", icon: Activity },
 ] as const;
 
@@ -94,6 +96,7 @@ export function Header() {
           <Link to="/plano-de-estudos" className="inline-flex items-center gap-1.5 text-muted-foreground transition hover:text-primary">
             <CalendarDays className="size-4" /> Meu plano
           </Link>
+          <Link to="/aprenda-a-estudar" className="inline-flex items-center gap-1.5 whitespace-nowrap text-muted-foreground transition hover:text-primary"><Brain className="size-4" /> Aprenda a estudar</Link>
           <Link to="/aprendizagem" className="inline-flex items-center gap-1.5 whitespace-nowrap text-muted-foreground transition hover:text-primary"><Activity className="size-4" /> Minha aprendizagem</Link>
           {isAdmin && <Link to="/admin-conteudos" className="inline-flex items-center gap-1 text-xs font-bold text-muted-foreground transition hover:text-primary"><ShieldCheck className="size-3.5" />Admin</Link>}
           <Link to="/entrar" className="inline-flex items-center whitespace-nowrap rounded-full border border-border px-3 py-2 text-xs font-extrabold text-foreground transition hover:bg-accent">Entrar</Link>
