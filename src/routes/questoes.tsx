@@ -7,7 +7,7 @@ import {
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CmsSections } from "@/components/site/CmsSections";
-import { supabase } from "@/integrations/supabase/client";
+import { dynamicSupabase } from "@/lib/supabase/dynamic-client";
 type PracticeQuestion = {
   id: string;
   subject_id?: string | null;
@@ -83,14 +83,15 @@ function QuestionsPage() {
         if (user) {
           setHistoryStorageMode("cloud");
           // O histórico de uma conta nunca é importado do armazenamento global do navegador.
-          const { data, error } = await (supabase as any)
+          const { data, error } = await dynamicSupabase
             .from("exam_practice_history")
             .select("attempts")
             .eq("user_id", user.id)
             .maybeSingle();
           if (error) throw error;
           if (!active) return;
-          setHistory(Array.isArray(data?.attempts) ? data.attempts as Attempt[] : []);
+          const storedAttempts = data && typeof data === "object" && "attempts" in data ? data.attempts : null;
+          setHistory(Array.isArray(storedAttempts) ? storedAttempts as Attempt[] : []);
         } else {
           setHistoryStorageMode("local");
           let localHistory: Attempt[] = [];
@@ -146,7 +147,20 @@ function QuestionsPage() {
           .rpc("get_published_exam_questions", { p_exam_slug: "ebserh-hubrasil" });
         if (error) throw error;
         if (!active) return;
-        const remote: PracticeQuestion[] = (data ?? []).map((item: any) => ({
+        type PublishedQuestionRow = {
+          id: string;
+          subject_id: string | null;
+          topic_id: string | null;
+          audience: PracticeQuestion["audience"];
+          subject: string;
+          topic: string;
+          difficulty: PracticeQuestion["difficulty"];
+          statement: string;
+          options: PracticeQuestion["options"];
+          reference: string | null;
+        };
+        const rows = Array.isArray(data) ? data as PublishedQuestionRow[] : [];
+        const remote: PracticeQuestion[] = rows.map((item) => ({
           id: item.id,
           subject_id: item.subject_id ?? null,
           topic_id: item.topic_id ?? null,
@@ -207,7 +221,7 @@ function QuestionsPage() {
         p_selected_option: selected,
       });
       if (error) throw error;
-      const result = Array.isArray(data) ? data[0] : data;
+      const result = (Array.isArray(data) ? data[0] : data) as QuestionAnswerResult | null;
       if (!result) throw new Error("Não foi possível corrigir esta questão.");
       const normalized: QuestionAnswerResult = {
         is_correct: Boolean(result.is_correct),
