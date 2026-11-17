@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { dynamicSupabase } from "@/lib/supabase/dynamic-client";
+import { supabase } from "@/integrations/supabase/client";
 import {
   ArrowUpRight,
   BookOpen,
