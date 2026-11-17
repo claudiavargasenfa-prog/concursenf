@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { dynamicSupabase } from "@/lib/supabase/dynamic-client";
 import {
   ArrowUpRight,
   BookOpen,
@@ -43,7 +43,7 @@ function useIsCatalogAdmin() {
     const check = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { if (active) setIsAdmin(false); return; }
-      const { data, error } = await (supabase as any).rpc("is_catalog_admin");
+      const { data, error } = await dynamicSupabase.rpc("is_catalog_admin");
       if (active) setIsAdmin(!error && data === true);
     };
     void check();
