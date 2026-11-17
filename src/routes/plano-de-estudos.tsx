@@ -1,3 +1,4 @@
+import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, BookOpenCheck, CalendarDays, CheckCircle2, Circle, Clock3, RotateCcw, Sparkles, Target } from "lucide-react";
@@ -79,7 +80,8 @@ function StudyPlanPage() {
             .maybeSingle();
           if (error) throw error;
           if (!active) return;
-          if (data?.plan) restored = data.plan;
+          const remotePlan = (data as { plan?: typeof restored } | null)?.plan;
+          if (remotePlan) restored = remotePlan;
           else if (Object.keys(localPlan).length) {
             await dynamicSupabase.from("exam_study_plans").upsert({
               user_id: user.id,

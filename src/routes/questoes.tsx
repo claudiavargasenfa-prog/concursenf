@@ -1,3 +1,4 @@
+import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
@@ -151,7 +152,7 @@ function QuestionsPage() {
           id: string;
           subject_id: string | null;
           topic_id: string | null;
-          audience: PracticeQuestion["audience"];
+          audience: NonNullable<PracticeQuestion["audience"]>;
           subject: string;
           topic: string;
           difficulty: PracticeQuestion["difficulty"];
