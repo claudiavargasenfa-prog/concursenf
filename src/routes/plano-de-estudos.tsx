@@ -81,7 +81,7 @@ function StudyPlanPage() {
           if (!active) return;
           if (data?.plan) restored = data.plan;
           else if (Object.keys(localPlan).length) {
-            await (supabase as any).from("exam_study_plans").upsert({
+            await dynamicSupabase.from("exam_study_plans").upsert({
               user_id: user.id,
               plan: localPlan,
               updated_at: new Date().toISOString(),
@@ -116,7 +116,7 @@ function StudyPlanPage() {
     const plan = { selectedSubjects, selectedDays, minutesPerDay, tasks, completed };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(plan));
     if (userId) {
-      void (supabase as any).from("exam_study_plans").upsert({
+      void dynamicSupabase.from("exam_study_plans").upsert({
         user_id: userId,
         plan,
         updated_at: new Date().toISOString(),
