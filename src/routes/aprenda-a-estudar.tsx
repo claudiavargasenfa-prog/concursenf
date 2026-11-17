@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, BookOpen, Brain, CalendarCheck, CheckCircle2, ChevronDown, Clock3, HeartHandshake, Lightbulb, ListChecks, RotateCcw, Target } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Brain, CalendarCheck, CheckCircle2, Clock3, HeartHandshake, Lightbulb, ListChecks, RotateCcw, Target } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 
@@ -63,7 +63,7 @@ function LearnToStudyPage() {
     <main className="min-h-screen bg-background px-4 py-9 sm:py-14">
       <div className="mx-auto max-w-6xl">
         <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline"><ArrowLeft className="size-4" /> Voltar ao início</Link>
-        <section className="mt-7 overflow-hidden rounded-[2rem] bg-surface-soft p-6 sm:p-10">
+        <section className="mt-7 overflow-hidden rounded-[2rem] bg-muted p-6 sm:p-10">
           <p className="text-xs font-extrabold uppercase tracking-[.2em] text-primary">Método ConcursEnf</p>
           <h1 className="mt-3 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">APRENDA A ESTUDAR</h1>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">Uma trilha prática para organizar sua preparação, compreender conteúdos, memorizar, revisar e resolver questões de concursos de Enfermagem com estratégia.</p>
