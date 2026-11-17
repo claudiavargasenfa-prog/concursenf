@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, BookOpen, CheckCircle2, CircleAlert, FilePlus2, Layers3, ListChecks, Save, Settings2 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { supabase } from "@/integrations/supabase/client";
+import { dynamicSupabase } from "@/lib/supabase/dynamic-client";
 import { ensureLearningTopic } from "@/lib/learning/catalog.service";
 
 type Tab = "conteudo" | "questao" | "flashcard";
@@ -49,7 +49,7 @@ function AdminExamContentPage() {
     setLoading(true);
     setError("");
     try {
-      const db = supabase as any;
+      const db = dynamicSupabase;
       const { data: adminAllowed, error: permissionError } = await db.rpc("is_catalog_admin");
       if (permissionError) throw permissionError;
       if (!adminAllowed) throw new Error("Acesso administrativo não liberado. Entre com sua conta e solicite a ativação do perfil de administradora.");
