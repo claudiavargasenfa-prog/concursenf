@@ -4,7 +4,7 @@ import { ArrowLeft, BookOpenCheck, CalendarDays, CheckCircle2, Circle, Clock3, R
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CmsSections } from "@/components/site/CmsSections";
-import { supabase } from "@/integrations/supabase/client";
+import { dynamicSupabase } from "@/lib/supabase/dynamic-client";
 import { CONTENT_GROUPS } from "@/lib/lp-content";
 
 const STORAGE_KEY = "concursenf-study-plan-v1";
@@ -72,7 +72,7 @@ function StudyPlanPage() {
         setUserId(user?.id ?? null);
         let restored = localPlan;
         if (user) {
-          const { data, error } = await (supabase as any)
+          const { data, error } = await dynamicSupabase
             .from("exam_study_plans")
             .select("plan")
             .eq("user_id", user.id)
